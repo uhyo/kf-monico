@@ -20,6 +20,7 @@ export default class Index{
             return true;
         }).catch((err)=>{
             console.error(err);
+            return false;
         });
     }
 }

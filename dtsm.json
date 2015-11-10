@@ -33,6 +33,9 @@
     },
     "es6-promise/es6-promise.d.ts": {
       "ref": "8c4ec896ab619e7cb6572f82423e6e1eece70f5a"
+    },
+    "react-dom/react-dom.d.ts": {
+      "ref": "8c4ec896ab619e7cb6572f82423e6e1eece70f5a"
     }
   }
 }
