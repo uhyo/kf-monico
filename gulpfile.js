@@ -26,7 +26,7 @@ gulp.task('tsc',()=>{
     .pipe(gulp.dest("js/"));
 });
 gulp.task('tsx-tsc',()=>{
-    return gulp.src("tsx/**/*.{ts,tsx}")
+    return gulp.src("client/**/*.{ts,tsx}")
     .pipe(typescript({
         module:"commonjs",
         target:"es5",
@@ -34,7 +34,7 @@ gulp.task('tsx-tsc',()=>{
         typescript:ts
     }))
     .js
-    .pipe(gulp.dest("jsx/"));
+    .pipe(gulp.dest("dest/"));
 });
 gulp.task('jsx',()=>{
     return browserifier(false);
@@ -50,7 +50,7 @@ gulp.task('tsx',(callback)=>{
     );
 });
 gulp.task('sass',()=>{
-    return gulp.src("sass/index.scss")
+    return gulp.src("client/sass/index.scss")
     .pipe(sass().on("error",sass.logError))
     .pipe(rename("css.css"))
     .pipe(gulp.dest("dist"));
@@ -58,25 +58,24 @@ gulp.task('sass',()=>{
 
 gulp.task('clean',()=>{
     del([
-        //tsc
         "js",
-        "src/**/*.js",
-        //jsx,sass
+        "server/**/*.js",
+        "dest",
         "dist",
     ],cb);
 });
 
 gulp.task('watch',['tsx-tsc','watch-jsx','tsc','sass'],()=>{
     gulp.watch('server/**/*.ts',['tsc']);
-    gulp.watch('tsx/**/*.{ts,tsx}',['tsx-tsc']);
-    gulp.watch('sass/**/*.scss',['sass']);
+    gulp.watch('client/**/*.{ts,tsx}',['tsx-tsc']);
+    gulp.watch('client/sass/**/*.scss',['sass']);
 });
 
 gulp.task('default',['tsx','tsc','sass']);
 
 function browserifier(watch){
     let opts={
-        entries:[path.join(__dirname,"jsx/entrypoint.js")],
+        entries:[path.join(__dirname,"dest/tsx/entrypoint.js")],
         extensions:['.js'],
         basedir:__dirname
     };

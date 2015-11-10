@@ -27,6 +27,7 @@
     "mongodb": "^2.0.48",
     "react": "^0.14.2",
     "react-dom": "^0.14.2",
+    "reflux": "^0.3.0",
     "run-sequence": "^1.1.4",
     "typescript": "^1.6.2",
     "uglifyify": "^3.0.1",
