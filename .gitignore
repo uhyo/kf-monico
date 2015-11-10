@@ -1,0 +1,6 @@
+node_modules
+.sass-cache
+server/**/*.js
+js/
+jsx/
+dist/
