@@ -17,6 +17,7 @@
     "es6-promise": "^3.0.2",
     "express": "^4.13.3",
     "express-session": "^1.12.1",
+    "express-ws": "^0.2.6",
     "gulp": "^3.9.0",
     "gulp-duration": "0.0.0",
     "gulp-rename": "^1.2.2",

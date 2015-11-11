@@ -1,10 +1,15 @@
 ///<reference path="../typings/bundle.d.ts" />
+///<reference path="../typings/express-ws.d.ts" />
 import Db from './db';
 
 import config=require('config');
-import express=require('express');
-import ejs=require('ejs');
+import * as express from 'express';
+import * as expressWs from 'express-ws';
+import * as ejs from 'ejs';
+import * as WebSocket from 'ws';
 import {Promise} from 'es6-promise';
+
+
 
 export default class Web{
     private db:Db;
@@ -14,6 +19,7 @@ export default class Web{
     init(db:Db):Promise<Web>{
         this.db = db;
         let app = this.app = express();
+        expressWs(app);
 
         app.use("/static", express.static("dist", {
             dotfiles: "ignore",
@@ -33,6 +39,16 @@ export default class Web{
         let app=this.app;
         app.get("/",(req,res)=>{
             res.render("index.ejs");
+        });
+        (app as any).ws("/",(ws:WebSocket,req)=>{
+            ws.send("foo");
+            ws.on("message",(mes)=>{
+                ws.send("Hello "+mes);
+                ws.close();
+            });
+            ws.on("close",()=>{
+                console.log("ws closed");
+            });
         });
     }
 }
