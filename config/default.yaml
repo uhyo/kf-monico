@@ -1,2 +1,14 @@
 webserver:
   port: 8080
+
+mongodb:
+  host: localhost
+  port: 27017
+  username: test
+  password: test
+  database: kf66monico
+  collections:
+    session: session
+
+session:
+  life: 259200

@@ -11,9 +11,9 @@ export default class Index{
     public init():Promise<boolean>{
         this.db = new Db();
         return this.db.init()
-        .then((db)=>{
+        .then((_)=>{
             this.web = new Web();
-            return this.web.init(db);
+            return this.web.init(this.db);
         })
         .then((web)=>{
             console.log("server is working");
