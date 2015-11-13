@@ -5,7 +5,7 @@ import App from './app';
 import Ws from '../lib/ws';
 
 document.addEventListener("DOMContentLoaded",()=>{
-    ReactDOM.render(<App/>, document.getElementById('app'));
-    //ws
-    (new Ws()).init();
+    let ws = new Ws();
+    ws.init();
+    ReactDOM.render(<App ws={ws}/>, document.getElementById('app'));
 },false);

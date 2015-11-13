@@ -46,19 +46,23 @@ export default class Ws{
             }
         });
     }
-    private send(obj:any):Promise<any>{
+    send(obj:any):Promise<any>{
         //コマンドを送信
         let comid = this.comid++;
         let com = extend({},obj,{
             comid
         });
         this.ws.send(JSON.stringify(com));
-        return new Promise((fulfilled, rejected)=>{
-            this.ack_queue.push({
-                comid,
-                handler: fulfilled
+        if(this.requiresAck(obj)){
+            return new Promise((fulfilled, rejected)=>{
+                this.ack_queue.push({
+                    comid,
+                    handler: fulfilled
+                });
             });
-        });
+        }else{
+            return Promise.resolve({});
+        }
     }
     private message(obj:any):void{
         //メッセージがきた
@@ -74,5 +78,10 @@ export default class Ws{
                 break;
             }
         }
+    }
+    //送信メッセージがackを必要とするか
+    private requiresAck(obj:any):boolean{
+        let command:string=obj.command;
+        return command==="session";
     }
 }

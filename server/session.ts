@@ -95,6 +95,9 @@ export default class Session{
                     });
                 });
                 break;
+            case "login":
+                console.log("login", obj.eccs);
+                break;
         }
     }
     private makeNewSession():Promise<string>{
