@@ -88,6 +88,11 @@ export default class Session{
                         sessionid: nid,
                         ack: obj.comid
                     });
+                }).catch((err)=>{
+                    this.send(ws, {
+                        command: "error",
+                        error: String(err)
+                    });
                 });
                 break;
         }

@@ -3,6 +3,10 @@ import * as React from 'react';
 
 import {default as pageStore, PageStoreData} from '../store/page';
 
+import {Page, PageProps, PageState} from './page/index';
+
+import Top from './page/top';
+
 export default class App extends React.Component<{},{
     page: PageStoreData
 }>{
@@ -22,9 +26,15 @@ export default class App extends React.Component<{},{
         this.page_unsubscribe();
     }
     render(){
+        let main:JSX.Element;
+        let page = this.state.page.page;
+        switch(page){
+            case "top":
+                main = <Top/>;
+                break;
+        }
         return <div>
-            <p>Hello, world!</p>
-            <p>page: {this.state.page.page}</p>
+            {main}
         </div>;
     }
 }
