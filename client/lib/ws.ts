@@ -2,6 +2,8 @@
 
 import * as extend from 'extend';
 
+import * as errorActions from '../action/error';
+
 export default class Ws{
     private ws:WebSocket;
     private comid:number;
@@ -16,7 +18,7 @@ export default class Ws{
     init():void{
         let ws = this.ws = new WebSocket(location.origin.replace(/^http/,"ws")+"/");
         ws.addEventListener("error",(e)=>{
-            console.error(e);
+            errorActions.error(new Error(e.message));
         });
         ws.addEventListener("open",(e)=>{
             this.initSession();
@@ -66,6 +68,11 @@ export default class Ws{
     }
     private message(obj:any):void{
         //メッセージがきた
+        let command = obj.command;
+        if(command==="error"){
+            //エラーがきた
+            errorActions.error(new Error(obj.error));
+        }
         let ack:number=obj.ack;
         if("number"!==typeof ack){
             return;

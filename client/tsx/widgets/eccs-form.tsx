@@ -5,6 +5,7 @@ import Ws from '../../lib/ws';
 
 import * as sessionActions from '../../action/session';
 
+//最初のECCSユーザIDを入力してもらう場面
 export default class EccsForm extends React.Component<{
     ws: Ws
 },{}>{

@@ -7,6 +7,8 @@ import Web from './web';
 import * as config from 'config';
 import * as randomString from 'random-string';
 
+import * as validator from './validator';
+
 import * as WebSocket from 'ws';
 import {Promise} from 'es6-promise';
 
@@ -54,12 +56,18 @@ export default class Session{
     send(ws:WebSocket,obj:any):void{
         ws.send(JSON.stringify(obj));
     }
+    sendError(ws:WebSocket,err:Error):void{
+        this.send(ws,{
+            command: "error",
+            error: String(err)
+        });
+    }
     //コマンド処理
     command(ws:WebSocket, obj:any):void{
+        let coll = this.db.collection(this.collection);
         switch(obj.command){
             case "session":
                 //セッションを要求
-                let coll = this.db.collection(this.collection);
                 let getid:Promise<string>;
                 if("string"===typeof obj.sessionid){
                     getid = coll.findOneAndUpdate({
@@ -83,20 +91,44 @@ export default class Session{
                 }
                 //セッションIDが得られたら返す
                 getid.then((nid)=>{
+                    //登録
+                    this.sessionid.set(ws, nid);
                     this.send(ws, {
                         command: "session",
                         sessionid: nid,
                         ack: obj.comid
                     });
                 }).catch((err)=>{
-                    this.send(ws, {
-                        command: "error",
-                        error: String(err)
-                    });
+                    this.sendError(ws, err);
                 });
                 break;
             case "login":
-                console.log("login", obj.eccs);
+                //セッションにユーザIDを登録
+                if(!validator.isECCSID(obj.eccs)){
+                    this.sendError(ws, new Error("Validation Error"));
+                    return;
+                }
+                let sessid = this.sessionid.get(ws);
+                if(sessid==null){
+                    //セッションがなかった
+                    this.sendError(ws, new Error("No Session"));
+                    return;
+                }
+                coll.updateOne({
+                    id: sessid
+                },{
+                    $set: {
+                        eccs: obj.eccs
+                    }
+                }).then((obj)=>{
+                    if(obj.result && obj.result.nModified === 0){
+                        //セッションがなかった
+                        this.sendError(ws, new Error("Session Expired"));
+                        this.sessionid.delete(ws);
+                    }
+                }).catch((err)=>{
+                    this.sendError(ws, err);
+                });
                 break;
         }
     }
