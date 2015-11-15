@@ -12,6 +12,9 @@ declare module "reflux"{
         init():void;
         getInitialState():T;
         listen(callback:(state:T)=>void):()=>void;
+        listenTo<U>(action:Action<U>, callback:(data:U)=>void):void;
+        listenToMany(actions:any):void;
+        trigger(obj:T):void;
     }
     export function createAction<T>():Action<T>;
     export function createStore<T>(opts:{

@@ -26,6 +26,7 @@
     "gulp-util": "^3.0.7",
     "js-yaml": "^3.4.3",
     "mongodb": "^2.0.48",
+    "object-assign": "^4.0.1",
     "random-string": "^0.1.2",
     "react": "^0.14.2",
     "react-dom": "^0.14.2",

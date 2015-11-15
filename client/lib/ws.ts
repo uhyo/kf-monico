@@ -3,6 +3,7 @@
 import * as extend from 'extend';
 
 import * as errorActions from '../action/error';
+import * as pageActions from '../action/page';
 
 export default class Ws{
     private ws:WebSocket;
@@ -69,9 +70,20 @@ export default class Ws{
     private message(obj:any):void{
         //メッセージがきた
         let command = obj.command;
-        if(command==="error"){
-            //エラーがきた
-            errorActions.error(new Error(obj.error));
+        switch(command){
+            case "error":
+                //エラーがきた
+                errorActions.error(new Error(obj.error));
+                break;
+            //ページ遷移
+            case "entrypage":
+                pageActions.entryPage({});
+                break;
+            case "mainpage":
+                pageActions.mainPage({
+                    user: obj.user
+                });
+                break;
         }
         let ack:number=obj.ack;
         if("number"!==typeof ack){

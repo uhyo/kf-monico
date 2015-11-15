@@ -7,6 +7,8 @@ import {default as pageStore, PageStoreData} from '../store/page';
 import {Page, PageProps, PageState} from './page/index';
 
 import Top from './page/top';
+import Entry from './page/entry';
+import Main from './page/main';
 
 export default class App extends React.Component<{
     ws: Ws
@@ -35,6 +37,12 @@ export default class App extends React.Component<{
         switch(page){
             case "top":
                 main = <Top ws={ws}/>;
+                break;
+            case "entry":
+                main = <Entry ws={ws}/>;
+                break;
+            case "main":
+                main = <Main ws={ws}/>;
                 break;
         }
         return <div>

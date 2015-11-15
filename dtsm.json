@@ -42,6 +42,9 @@
     },
     "extend/extend.d.ts": {
       "ref": "708609e0764daeb5eb64104af7aca50c520c4e6e"
+    },
+    "object-assign/object-assign.d.ts": {
+      "ref": "aed176536a202b9a2475ce1989ea6d2d0226a185"
     }
   }
 }

@@ -1,8 +1,10 @@
 ///<reference path="../typings/bundle.d.ts" />
 //クライアントとの　接　続　を一挙に管理するひとだ
 
-import {default as Db, SessionDoc} from './db';
+import Db from './db';
 import Web from './web';
+
+import {SessionDoc, UserDoc} from '../lib/db';
 
 import * as config from 'config';
 import * as randomString from 'random-string';
@@ -12,16 +14,20 @@ import * as validator from './validator';
 import * as WebSocket from 'ws';
 import {Promise} from 'es6-promise';
 
+interface CollectionNames{
+    session: string;
+    user:string;
+}
 
 
 export default class Session{
     private wss:Array<WebSocket>;
     private sessionid:WeakMap<WebSocket,string>;
-    private collection:string;
+    private collection:CollectionNames;
     constructor(private db:Db){
         this.wss=[];
         this.sessionid = new WeakMap<WebSocket, string>();
-        this.collection = config.get<string>("mongodb.collections.session");
+        this.collection = config.get<CollectionNames>("mongodb.collections");
     }
     init():Promise<{}>{
         return Promise.resolve({});
@@ -64,7 +70,7 @@ export default class Session{
     }
     //コマンド処理
     command(ws:WebSocket, obj:any):void{
-        let coll = this.db.collection(this.collection);
+        let coll = this.db.collection(this.collection.session);
         switch(obj.command){
             case "session":
                 //セッションを要求
@@ -76,12 +82,18 @@ export default class Session{
                         $set: {
                             time: new Date()
                         }
-                    }).then((doc:SessionDoc)=>{
+                    }).then((obj)=>{
+                        let doc:SessionDoc = obj.value;
+                        console.log(doc);
                         if(doc==null){
                             //新規のセッションが必要
                             //セキュリティ上の観点から、向こうが要求するセッションIDは使用せず新規のセッションIDを生成
                             return this.makeNewSession();
                         }else{
+                            //セッションがあった。ECCSもあったらユーザーデータを取得
+                            if(doc.eccs!=null){
+                                this.findUserToNavigate(ws, doc.eccs);
+                            }
                             return obj.sessionid;
                         }
                     });
@@ -121,10 +133,12 @@ export default class Session{
                         eccs: obj.eccs
                     }
                 }).then((obj)=>{
-                    if(obj.result && obj.result.nModified === 0){
+                    if(obj.result && obj.result.n === 0){
                         //セッションがなかった
                         this.sendError(ws, new Error("Session Expired"));
                         this.sessionid.delete(ws);
+                    }else{
+                        this.findUserToNavigate(ws, obj.eccs);
                     }
                 }).catch((err)=>{
                     this.sendError(ws, err);
@@ -134,7 +148,7 @@ export default class Session{
     }
     private makeNewSession():Promise<string>{
         let nid = randomString({length: 20});
-        return this.db.collection(this.collection).insertOne({
+        return this.db.collection(this.collection.session).insertOne({
             id: nid,
             eccs: null,
             rojin: false,
@@ -142,6 +156,25 @@ export default class Session{
             time: new Date()
         }).then((_)=>{
             return nid;
+        });
+    }
+    private findUserToNavigate(ws:WebSocket, eccs:string):void{
+        this.db.collection(this.collection.user).findOne({
+            eccs
+        }).then((doc:UserDoc)=>{
+            if(doc==null){
+                //ないのでユーザー新規登録ページへ
+                this.send(ws, {
+                    command: "entrypage"
+                });
+            }else{
+                //あった
+                this.send(ws, {
+                    command: "mainpage",
+                    user: doc
+                });
+                return {};
+            }
         });
     }
 }

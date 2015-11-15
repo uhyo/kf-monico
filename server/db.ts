@@ -4,13 +4,7 @@ import mongodb=require('mongodb');
 
 import {Promise} from 'es6-promise';
 
-export interface SessionDoc{
-    id:string;
-    eccs:string;
-    rojin:boolean;
-    rojin_name:string;
-    time:Date;
-}
+import {SessionDoc, UserDoc} from '../lib/db';
 
 export default class Db{
     private db:/*mongodb.Db*/ any;
@@ -37,17 +31,23 @@ export default class Db{
     }
     //コレクションの初期化
     private initSession(db:any):Promise<{}>{
-        let coll = db.collection(config.get<string>("mongodb.collections.session"));
+        let coll_s = db.collection(config.get<string>("mongodb.collections.session")),
+            coll_u = db.collection(config.get<string>("mongodb.collections.user"));
         return Promise.all([
-            coll.createIndex({
+            coll_s.createIndex({
                 id: 1
             },{
                 unique: true
             }),
-            coll.createIndex({
+            coll_s.createIndex({
                 time: 1
             },{
                 expireAfterSeconds: config.get<number>("session.life")
+            }),
+            coll_u.createIndex({
+                eccs: 1
+            },{
+                unique: true
             })
         ]);
     }
