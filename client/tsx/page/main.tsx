@@ -8,7 +8,9 @@ export default class Main extends Page{
     }
     render(){
         return <div className="page-main">
-            <p>Main page</p>
+            <div className="main-profile">
+                <p><b>{this.props.user.name}</b>さん</p>
+            </div>
         </div>;
     }
 }

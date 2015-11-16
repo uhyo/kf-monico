@@ -6,6 +6,8 @@ import UserForm from '../widgets/user-form';
 
 import {UserDoc} from '../../../lib/db';
 
+import * as sessionActions from '../../action/session';
+
 export default class Entry extends Page{
     constructor(props){
         super(props);
@@ -25,7 +27,11 @@ export default class Entry extends Page{
     }
     private handleSubmit():(user:UserDoc)=>void{
         return (user:UserDoc)=>{
-            console.log(user);
+            //ユーザー情報をセーブ
+            sessionActions.entry({
+                ws: this.props.ws,
+                user
+            });
         };
     }
 }

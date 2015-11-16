@@ -33,7 +33,7 @@ let pageStore = Reflux.createStore({
     },
     onMainPage({user}):void{
         this.state = objectAssign({},this.state,{
-            page:"entry",
+            page:"main",
             user
         });
         this.trigger(this.state);

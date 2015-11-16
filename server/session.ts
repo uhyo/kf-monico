@@ -71,78 +71,126 @@ export default class Session{
     //コマンド処理
     command(ws:WebSocket, obj:any):void{
         let coll = this.db.collection(this.collection.session);
-        switch(obj.command){
-            case "session":
-                //セッションを要求
-                let getid:Promise<string>;
-                if("string"===typeof obj.sessionid){
-                    getid = coll.findOneAndUpdate({
-                        id : obj.sessionid
-                    },{
-                        $set: {
-                            time: new Date()
-                        }
-                    }).then((obj)=>{
-                        let doc:SessionDoc = obj.value;
-                        if(doc==null){
-                            //新規のセッションが必要
-                            //セキュリティ上の観点から、向こうが要求するセッションIDは使用せず新規のセッションIDを生成
-                            return this.makeNewSession();
-                        }else{
-                            //セッションがあった。ECCSもあったらユーザーデータを取得
-                            if(doc.eccs!=null){
-                                this.findUserToNavigate(ws, doc.eccs);
-                            }
-                            return obj.sessionid;
-                        }
-                    });
-                }else{
-                    //新規のセッションを作る
-                    getid = this.makeNewSession();
-                }
-                //セッションIDが得られたら返す
-                getid.then((nid)=>{
-                    //登録
-                    this.sessionid.set(ws, nid);
-                    this.send(ws, {
-                        command: "session",
-                        sessionid: nid,
-                        ack: obj.comid
-                    });
-                }).catch((err)=>{
-                    this.sendError(ws, err);
-                });
-                break;
-            case "login":
-                //セッションにユーザIDを登録
-                if(!validator.isECCSID(obj.eccs)){
-                    this.sendError(ws, new Error("Validation Error"));
-                    return;
-                }
-                let sessid = this.sessionid.get(ws);
-                if(sessid==null){
-                    //セッションがなかった
-                    this.sendError(ws, new Error("No Session"));
-                    return;
-                }
-                coll.updateOne({
-                    id: sessid
+        console.log(obj);
+        let command = obj.command;
+        if(command==="session"){
+            //セッションを要求
+            let getid:Promise<string>;
+            if("string"===typeof obj.sessionid){
+                getid = coll.findOneAndUpdate({
+                    id : obj.sessionid
                 },{
                     $set: {
-                        eccs: obj.eccs
+                        time: new Date()
                     }
                 }).then((obj)=>{
-                    if(obj.result && obj.result.n === 0){
-                        //セッションがなかった
-                        this.sendError(ws, new Error("Session Expired"));
-                        this.sessionid.delete(ws);
+                    let doc:SessionDoc = obj.value;
+                    if(doc==null){
+                        //新規のセッションが必要
+                        //セキュリティ上の観点から、向こうが要求するセッションIDは使用せず新規のセッションIDを生成
+                        return this.makeNewSession();
                     }else{
-                        this.findUserToNavigate(ws, obj.eccs);
+                        //セッションがあった。ECCSもあったらユーザーデータを取得
+                        if(doc.eccs!=null){
+                            this.findUserToNavigate(ws, doc.eccs);
+                        }
+                        //Typing problem
+                        //return doc.id;
+                        return Promise.resolve(doc.id);
                     }
-                }).catch((err)=>{
-                    this.sendError(ws, err);
                 });
-                break;
+            }else{
+                //新規のセッションを作る
+                getid = this.makeNewSession();
+            }
+            //セッションIDが得られたら返す
+            getid.then((nid)=>{
+                //登録
+                this.sessionid.set(ws, nid);
+                this.send(ws, {
+                    command: "session",
+                    sessionid: nid,
+                    ack: obj.comid
+                });
+            }).catch((err)=>{
+                this.sendError(ws, err);
+            });
+        }else if(command==="login"){
+            //セッションにユーザIDを登録
+            if(!validator.isECCSID(obj.eccs)){
+                this.sendError(ws, new Error("Validation Error"));
+                return;
+            }
+            let sessid = this.sessionid.get(ws);
+            if(sessid==null){
+                //セッションがなかった
+                this.sendError(ws, new Error("No Session"));
+                return;
+            }
+            coll.updateOne({
+                id: sessid
+            },{
+                $set: {
+                    eccs: obj.eccs
+                }
+            }).then((obj)=>{
+                if(obj.result && obj.result.n === 0){
+                    //セッションがなかった
+                    this.sendError(ws, new Error("Session Expired"));
+                    this.sessionid.delete(ws);
+                }else{
+                    this.findUserToNavigate(ws, obj.eccs);
+                }
+            }).catch((err)=>{
+                this.sendError(ws, err);
+            });
+        }else if(command==="entry"){
+            //ユーザー情報を登録
+            let sessid = this.sessionid.get(ws);
+            if(sessid==null){
+                //セッションがなかった
+                this.sendError(ws, new Error("No Session"));
+                return;
+            }
+            if("string"!==typeof obj.name || "string"!==typeof obj.name_phonetic || "string"!==typeof obj.tel){
+                this.sendError(ws, new Error("は？"));
+                return;
+            }
+            this.getUserData(sessid).then((eccs:string)=>{
+                if(eccs==null){
+                    throw new Error("Session Expired");
+                }
+                let collu = this.db.collection(this.collection.user);
+                return collu.updateOne({
+                    eccs
+                },{
+                    $setOnInsert:{
+                        eccs
+                    },
+                    $set:{
+                        name: obj.name,
+                        name_phonetic: obj.name_phonetic,
+                        tel: obj.tel
+                    }
+                },{
+                    upsert: true
+                }).then(()=>{
+                    return {
+                        eccs,
+                        name: obj.name,
+                        name_phonetic: obj.name_phonetic,
+                        tel: obj.tel
+                    };
+                });
+            }).then((user:UserDoc)=>{
+                //処理おわり
+                this.send(ws,{
+                    command: "mainpage",
+                    user
+                });
+            }).catch((err)=>{
+                this.sendError(ws, err);
+            });
         }
     }
     private makeNewSession():Promise<string>{
@@ -155,6 +203,15 @@ export default class Session{
             time: new Date()
         }).then((_)=>{
             return nid;
+        });
+    }
+    //セッションIDからECCS ID
+    private getUserData(sessid:string):Promise<string>{
+        let coll = this.db.collection(this.collection.session);
+        return coll.find({
+            id: sessid
+        }).limit(1).next().then((doc:SessionDoc)=>{
+            return doc && doc.eccs;
         });
     }
     private findUserToNavigate(ws:WebSocket, eccs:string):void{

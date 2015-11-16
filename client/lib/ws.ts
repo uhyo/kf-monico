@@ -69,6 +69,7 @@ export default class Ws{
     }
     private message(obj:any):void{
         //メッセージがきた
+        console.log(obj);
         let command = obj.command;
         switch(command){
             case "error":
