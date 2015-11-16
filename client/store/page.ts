@@ -10,6 +10,8 @@ import {UserDoc} from '../../lib/db';
 
 export interface PageStoreData{
     page: string;
+    eccs?:string;
+    user?:UserDoc;
 }
 
 let pageStore = Reflux.createStore({
@@ -22,8 +24,11 @@ let pageStore = Reflux.createStore({
         };
         this.listenToMany(pageActions);
     },
-    onEntryPage():void{
-        this.state = objectAssign({},this.state,{page:"entry"});
+    onEntryPage({eccs}):void{
+        this.state = objectAssign({},this.state,{
+            page:"entry",
+            eccs
+        });
         this.trigger(this.state);
     },
     onMainPage({user}):void{

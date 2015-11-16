@@ -84,7 +84,6 @@ export default class Session{
                         }
                     }).then((obj)=>{
                         let doc:SessionDoc = obj.value;
-                        console.log(doc);
                         if(doc==null){
                             //新規のセッションが必要
                             //セキュリティ上の観点から、向こうが要求するセッションIDは使用せず新規のセッションIDを生成
@@ -165,7 +164,8 @@ export default class Session{
             if(doc==null){
                 //ないのでユーザー新規登録ページへ
                 this.send(ws, {
-                    command: "entrypage"
+                    command: "entrypage",
+                    eccs
                 });
             }else{
                 //あった

@@ -10,7 +10,6 @@ export default class Top extends Page{
     }
     render(){
         return <div className="page-top">
-            <h1>KF66 Morning Call System</h1>
             <div className="top-form">
                 <EccsForm ws={this.props.ws}/>
             </div>

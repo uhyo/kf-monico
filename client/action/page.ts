@@ -8,6 +8,7 @@ import * as errorActions from './error';
 
 //ページ遷移
 export var entryPage = Reflux.createAction<{
+    eccs: string;
 }>();
 
 export var mainPage = Reflux.createAction<{

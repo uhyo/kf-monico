@@ -39,14 +39,15 @@ export default class App extends React.Component<{
                 main = <Top ws={ws}/>;
                 break;
             case "entry":
-                main = <Entry ws={ws}/>;
+                main = <Entry ws={ws} eccs={this.state.page.eccs}/>;
                 break;
             case "main":
                 main = <Main ws={ws}/>;
                 break;
         }
-        return <div>
+        return <article className="app">
+            <h1>KF66 Morning Call System</h1>
             {main}
-        </div>;
+        </article>;
     }
 }

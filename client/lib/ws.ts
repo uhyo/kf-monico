@@ -77,7 +77,9 @@ export default class Ws{
                 break;
             //ページ遷移
             case "entrypage":
-                pageActions.entryPage({});
+                pageActions.entryPage({
+                    eccs: obj.eccs
+                });
                 break;
             case "mainpage":
                 pageActions.mainPage({
