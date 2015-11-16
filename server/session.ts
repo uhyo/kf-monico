@@ -133,8 +133,8 @@ export default class Session{
                 $set: {
                     eccs: obj.eccs
                 }
-            }).then((obj)=>{
-                if(obj.result && obj.result.n === 0){
+            }).then((result)=>{
+                if(result.result && result.result.n === 0){
                     //セッションがなかった
                     this.sendError(ws, new Error("Session Expired"));
                     this.sessionid.delete(ws);
@@ -215,9 +215,11 @@ export default class Session{
         });
     }
     private findUserToNavigate(ws:WebSocket, eccs:string):void{
+        console.log("findusertonagivate",eccs);
         this.db.collection(this.collection.user).findOne({
             eccs
         }).then((doc:UserDoc)=>{
+            console.log(doc);
             if(doc==null){
                 //ないのでユーザー新規登録ページへ
                 this.send(ws, {
