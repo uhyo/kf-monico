@@ -4,9 +4,10 @@ import * as objectAssign from 'object-assign';
 import Ws from '../lib/ws';
 
 
-import {UserDoc} from '../../lib/db';
+import {UserDoc, CallEntry} from '../../lib/db';
 
 import * as errorActions from './error';
+import * as pageActions from './page';
 
 export var login = Reflux.createAction<{
     ws: Ws;
@@ -31,3 +32,14 @@ entry.listen(({ws, user})=>{
     ws.send(objectAssign({command:"entry"}, user));
 });
 
+//モニコ登録
+export var call = Reflux.createAction<{
+    ws: Ws,
+    call: CallEntry
+}>();
+
+call.listen(({ws, call})=>{
+    ws.send(objectAssign({command:"call"}, call)).then(()=>{
+        pageActions.callokPage({});
+    });
+});

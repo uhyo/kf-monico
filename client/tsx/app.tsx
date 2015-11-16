@@ -9,6 +9,7 @@ import {Page, PageProps, PageState} from './page/index';
 import Top from './page/top';
 import Entry from './page/entry';
 import Main from './page/main';
+import Callok from './page/callok';
 
 export default class App extends React.Component<{
     ws: Ws
@@ -43,6 +44,9 @@ export default class App extends React.Component<{
                 break;
             case "main":
                 main = <Main ws={ws} user={this.state.page.user} call={this.state.page.call}/>;
+                break;
+            case "callok":
+                main = <Callok ws={ws}/>;
                 break;
         }
         return <article className="app">

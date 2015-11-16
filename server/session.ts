@@ -76,7 +76,7 @@ export default class Session{
     command(ws:WebSocket, obj:any):void{
         let coll = this.db.collection(this.collection.session);
         console.log(obj);
-        let command = obj.command;
+        let command:string = obj.command;
         if(command==="session"){
             //セッションを要求
             let getid:Promise<string>;
@@ -191,6 +191,55 @@ export default class Session{
                 this.send(ws,{
                     command: "mainpage",
                     user
+                });
+            }).catch((err)=>{
+                this.sendError(ws, err);
+            });
+        }else if(command==="call"){
+            let sessid = this.sessionid.get(ws);
+            if(sessid==null){
+                //セッションがなかった
+                this.sendError(ws, new Error("No Session"));
+                return;
+            }
+            if("number"!==typeof obj.hour || "number"!==typeof obj.minute){
+                this.sendError(ws, new Error("は？"));
+                return;
+            }
+            this.getSystemInfo().then((system:SystemInfo)=>{
+                return this.getUserData(sessid).then((eccs:string)=>{
+                    if(eccs==null){
+                        throw new Error("Session Expired");
+                    }
+                    let collc = this.db.collection(this.collection.call);
+                    return collc.updateOne({
+                        eccs,
+                        date: system.date
+                    },{
+                        $setOnInsert:{
+                            eccs,
+                            date: system.date
+                        },
+                        $set:{
+                            hour: obj.hour,
+                            minute: obj.minute,
+                            next_hour: obj.hour,
+                            next_minute: obj.minute,
+                            snooze: 0,
+                            awake: false,
+                            confirmed: false,
+                            occupied: false,
+                            occupied_by: ""
+                        }
+                    },{
+                        upsert: true
+                    });
+                });
+            }).then(()=>{
+                //登録成功メッセージを送るぜえええええあ
+                this.send(ws, {
+                    command: "ok",
+                    ack: obj.comid
                 });
             }).catch((err)=>{
                 this.sendError(ws, err);

@@ -16,3 +16,6 @@ export var mainPage = Reflux.createAction<{
     call: CallDoc;
 }>();
 
+//ok
+export var callokPage = Reflux.createAction<{}>();
+

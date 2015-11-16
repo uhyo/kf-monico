@@ -6,6 +6,8 @@ import {CallDoc, CallEntry} from '../../../lib/db';
 
 import CallForm from '../widgets/call-form';
 
+import * as sessionActions from '../../action/session';
+
 export default class Main extends Page{
     constructor(props){
         super(props);
@@ -22,7 +24,10 @@ export default class Main extends Page{
     }
     private handleSubmit():(call:CallEntry)=>void{
         return (call:CallEntry)=>{
-            console.log(call);
+            sessionActions.call({
+                ws: this.props.ws,
+                call
+            });
         };
     }
 }

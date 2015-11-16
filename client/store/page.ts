@@ -52,6 +52,13 @@ let pageStore = Reflux.createStore({
         });
         this.history();
         this.trigger(this.state);
+    },
+    onCallokPage():void{
+        this.state = objectAssign({},this.state,{
+            page: "callok"
+        });
+        this.history();
+        this.trigger(this.state);
     }
 });
 
