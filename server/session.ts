@@ -215,11 +215,9 @@ export default class Session{
         });
     }
     private findUserToNavigate(ws:WebSocket, eccs:string):void{
-        console.log("findusertonagivate",eccs);
         this.db.collection(this.collection.user).findOne({
             eccs
         }).then((doc:UserDoc)=>{
-            console.log(doc);
             if(doc==null){
                 //ないのでユーザー新規登録ページへ
                 this.send(ws, {

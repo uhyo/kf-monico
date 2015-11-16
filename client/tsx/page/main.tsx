@@ -10,6 +10,7 @@ export default class Main extends Page{
         return <div className="page-main">
             <div className="main-profile">
                 <p><b>{this.props.user.name}</b>さん</p>
+                <p><a href="/">ログアウト</a></p>
             </div>
         </div>;
     }

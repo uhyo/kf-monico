@@ -23,12 +23,24 @@ let pageStore = Reflux.createStore({
             page: "top"
         };
         this.listenToMany(pageActions);
+
+        window.addEventListener("popstate",(e)=>{
+            if(e.state){
+                this.state = objectAssign({}, e.state);
+                this.trigger(this.state);
+            }
+        });
+    },
+    history():void{
+        //stateにアレを追加
+        history.pushState(this.state, "", this.state.page==="top" ? "/" : "/"+this.state.page);
     },
     onEntryPage({eccs}):void{
         this.state = objectAssign({},this.state,{
             page:"entry",
             eccs
         });
+        this.history();
         this.trigger(this.state);
     },
     onMainPage({user}):void{
@@ -36,6 +48,7 @@ let pageStore = Reflux.createStore({
             page:"main",
             user
         });
+        this.history();
         this.trigger(this.state);
     }
 });
