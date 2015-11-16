@@ -43,7 +43,7 @@ export default class Web{
     }
     private initRoute():void{
         let app=this.app, session=this.session;
-        app.get("/",(req,res)=>{
+        app.get("*",(req,res)=>{
             res.render("index.ejs");
         });
         (app as any).ws("/",(ws:WebSocket,req)=>{

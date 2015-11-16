@@ -84,7 +84,8 @@ export default class Ws{
                 break;
             case "mainpage":
                 pageActions.mainPage({
-                    user: obj.user
+                    user: obj.user,
+                    call: obj.call
                 });
                 break;
         }

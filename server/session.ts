@@ -4,7 +4,7 @@
 import Db from './db';
 import Web from './web';
 
-import {SessionDoc, UserDoc} from '../lib/db';
+import {SessionDoc, UserDoc, CallDoc, SystemInfo} from '../lib/db';
 
 import * as config from 'config';
 import * as randomString from 'random-string';
@@ -15,8 +15,10 @@ import * as WebSocket from 'ws';
 import {Promise} from 'es6-promise';
 
 interface CollectionNames{
+    system:string;
     session: string;
     user:string;
+    call:string;
 }
 
 
@@ -24,10 +26,12 @@ export default class Session{
     private wss:Array<WebSocket>;
     private sessionid:WeakMap<WebSocket,string>;
     private collection:CollectionNames;
+    private systemCache:SystemInfo;
     constructor(private db:Db){
         this.wss=[];
         this.sessionid = new WeakMap<WebSocket, string>();
         this.collection = config.get<CollectionNames>("mongodb.collections");
+        this.systemCache = null;
     }
     init():Promise<{}>{
         return Promise.resolve({});
@@ -214,11 +218,29 @@ export default class Session{
             return doc && doc.eccs;
         });
     }
+    private getSystemInfo():Promise<SystemInfo>{
+        if(this.systemCache != null){
+            return Promise.resolve(this.systemCache);
+        }else{
+            return this.db.collection(this.collection.system).find({
+                key: "system"
+            }).limit(1).next().then((doc:SystemInfo)=>{
+                this.systemCache = doc;
+                return doc;
+            });
+        }
+    }
     private findUserToNavigate(ws:WebSocket, eccs:string):void{
-        this.db.collection(this.collection.user).findOne({
-            eccs
-        }).then((doc:UserDoc)=>{
-            if(doc==null){
+        let coll_u = this.db.collection(this.collection.user),
+            coll_c = this.db.collection(this.collection.call);
+        this.getSystemInfo().then((system:SystemInfo)=>{
+            let date=system.date;
+            return Promise.all([
+                coll_u.find({eccs}).limit(1).next(),
+                coll_c.find({date, eccs}).limit(1).next()
+            ]);
+        }).then(([udoc, cdoc])=>{
+            if(udoc==null){
                 //ないのでユーザー新規登録ページへ
                 this.send(ws, {
                     command: "entrypage",
@@ -228,10 +250,14 @@ export default class Session{
                 //あった
                 this.send(ws, {
                     command: "mainpage",
-                    user: doc
+                    user: udoc,
+                    call: cdoc
                 });
                 return {};
             }
+        })
+        .catch((err)=>{
+            console.error(err);
         });
     }
 }

@@ -4,7 +4,7 @@ import mongodb=require('mongodb');
 
 import {Promise} from 'es6-promise';
 
-import {SessionDoc, UserDoc} from '../lib/db';
+import {SessionDoc, UserDoc, SystemInfo} from '../lib/db';
 
 export default class Db{
     private db:/*mongodb.Db*/ any;
@@ -32,7 +32,9 @@ export default class Db{
     //コレクションの初期化
     private initSession(db:any):Promise<{}>{
         let coll_s = db.collection(config.get<string>("mongodb.collections.session")),
-            coll_u = db.collection(config.get<string>("mongodb.collections.user"));
+            coll_u = db.collection(config.get<string>("mongodb.collections.user")),
+            coll_c = db.collection(config.get<string>("mongodb.collections.call")),
+            coll_sys=db.collection(config.get<string>("mongodb.collections.system"));
         return Promise.all([
             coll_s.createIndex({
                 id: 1
@@ -48,7 +50,47 @@ export default class Db{
                 eccs: 1
             },{
                 unique: true
-            })
+            }),
+            coll_c.createIndex({
+                date: 1,
+                eccs: 1
+            },{
+                unique: true
+            }),
+            coll_c.createIndex({
+                date: 1,
+                next_hour: 1,
+                next_minute: 1,
+                snooze: -1
+            }),
+            coll_sys.createIndex({
+                key: 1
+            },{
+                unique: true
+            }),
+            this.initSys()
         ]);
     }
+    private initSys():Promise<any>{
+        let coll_sys=this.db.collection(config.get<string>("mongodb.collections.system"));
+        return coll_sys.find({
+            key:"system"
+        }).limit(1).next().then((doc:SystemInfo)=>{
+            if(doc!=null){
+                return {};
+            }else{
+                //いれる
+                return coll_sys.insertOne({
+                    date: (new Date()).getDate()+1,
+                    roujin_pass: sha256sum(config.get<string>("system.roujin_pass")),
+                    key: "system"
+                });
+            }
+        });
+    }
+}
+
+function sha256sum(str:string):string{
+    //TODO
+    return "";
 }

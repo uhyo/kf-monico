@@ -2,7 +2,7 @@
 import * as Reflux from 'reflux';
 import Ws from '../lib/ws';
 
-import {UserDoc} from '../../lib/db';
+import {UserDoc, CallDoc} from '../../lib/db';
 
 import * as errorActions from './error';
 
@@ -13,5 +13,6 @@ export var entryPage = Reflux.createAction<{
 
 export var mainPage = Reflux.createAction<{
     user: UserDoc;
+    call: CallDoc;
 }>();
 

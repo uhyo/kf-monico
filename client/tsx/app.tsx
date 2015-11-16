@@ -42,7 +42,7 @@ export default class App extends React.Component<{
                 main = <Entry ws={ws} eccs={this.state.page.eccs}/>;
                 break;
             case "main":
-                main = <Main ws={ws} user={this.state.page.user}/>;
+                main = <Main ws={ws} user={this.state.page.user} call={this.state.page.call}/>;
                 break;
         }
         return <article className="app">

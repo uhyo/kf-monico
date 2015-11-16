@@ -2,7 +2,7 @@
 import * as React from 'react';
 import Ws from '../../lib/ws';
 
-import {UserDoc} from '../../../lib/db';
+import {UserDoc, CallDoc} from '../../../lib/db';
 
 export interface PageProps{
     ws: Ws;
@@ -10,6 +10,7 @@ export interface PageProps{
     eccs?:string;
     //mainpage
     user?:UserDoc;
+    call?:CallDoc;
 }
 export interface PageState{
 }

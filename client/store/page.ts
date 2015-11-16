@@ -6,12 +6,13 @@ import * as objectAssign from 'object-assign';
 
 import * as pageActions from '../action/page';
 
-import {UserDoc} from '../../lib/db';
+import {UserDoc, CallDoc} from '../../lib/db';
 
 export interface PageStoreData{
     page: string;
     eccs?:string;
     user?:UserDoc;
+    call?:CallDoc;
 }
 
 let pageStore = Reflux.createStore({
@@ -43,10 +44,11 @@ let pageStore = Reflux.createStore({
         this.history();
         this.trigger(this.state);
     },
-    onMainPage({user}):void{
+    onMainPage({user, call}):void{
         this.state = objectAssign({},this.state,{
             page:"main",
-            user
+            user,
+            call
         });
         this.history();
         this.trigger(this.state);
