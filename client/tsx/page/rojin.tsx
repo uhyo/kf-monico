@@ -13,6 +13,7 @@ export default class Rojin extends Page{
         return <section className="page-rojin">
             <h1>老人ホーム</h1>
             <p>老人ページです。</p>
+            <p><a href="/">もどる</a></p>
         </section>;
     }
 }

@@ -104,8 +104,12 @@ export default class Session{
                         //セキュリティ上の観点から、向こうが要求するセッションIDは使用せず新規のセッションIDを生成
                         return this.makeNewSession();
                     }else{
-                        //セッションがあった。ECCSもあったらユーザーデータを取得
-                        if(doc.eccs!=null){
+                        //セッションがあった。
+                        if(doc.rojin===true){
+                            //老人セッションだ
+                            this.navigateRojin(ws);
+                        }else if(doc.eccs!=null){
+                            //ECCSがあったからユーザーデータを取得
                             this.findUserToNavigate(ws, doc.eccs);
                         }
                         //Typing problem
@@ -170,7 +174,9 @@ export default class Session{
                 id: sessid
             },{
                 $set: {
-                    eccs: null
+                    eccs: null,
+                    rojin: false,
+                    rojin_name: ""
                 }
             }).then((result)=>{
                 this.send(ws,{
@@ -191,7 +197,7 @@ export default class Session{
                 this.sendError(ws, new Error("は？"));
                 return;
             }
-            this.getUserData(sessid).then((eccs:string)=>{
+            this.getUserData(sessid).then(({eccs})=>{
                 if(eccs==null){
                     throw new Error("Session Expired");
                 }
@@ -238,7 +244,7 @@ export default class Session{
                 return;
             }
             this.getSystemInfo().then((system:SystemInfo)=>{
-                return this.getUserData(sessid).then((eccs:string)=>{
+                return this.getUserData(sessid).then(({eccs})=>{
                     if(eccs==null){
                         throw new Error("Session Expired");
                     }
@@ -319,12 +325,16 @@ export default class Session{
         });
     }
     //セッションIDからECCS ID
-    private getUserData(sessid:string):Promise<string>{
+    private getUserData(sessid:string):Promise<SessionDoc>{
         let coll = this.db.collection(this.collection.session);
         return coll.find({
             id: sessid
         }).limit(1).next().then((doc:SessionDoc)=>{
-            return doc && doc.eccs;
+            return doc || {
+                eccs: null,
+                rojin: false,
+                rojin_name: ""
+            };
         });
     }
     private getSystemInfo():Promise<SystemInfo>{
