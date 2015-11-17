@@ -10,6 +10,7 @@ import * as config from 'config';
 import * as randomString from 'random-string';
 
 import * as validator from './validator';
+import sha256sum from './sha256sum';
 
 import * as WebSocket from 'ws';
 import {Promise} from 'es6-promise';
@@ -76,7 +77,16 @@ export default class Session{
     command(ws:WebSocket, obj:any):void{
         let coll = this.db.collection(this.collection.session);
         console.log(obj);
-        let command:string = obj.command;
+        let command:string = obj.command, sessid:string;;
+        if(command!=="session"){
+            //セッションチェック
+            sessid = this.sessionid.get(ws);
+            if(sessid==null){
+                //セッションがなかった
+                this.sendError(ws, new Error("No Session"));
+                return;
+            }
+        }
         if(command==="session"){
             //セッションを要求
             let getid:Promise<string>;
@@ -145,6 +155,27 @@ export default class Session{
                 }else{
                     this.findUserToNavigate(ws, obj.eccs);
                 }
+            }).catch((err)=>{
+                this.sendError(ws, err);
+            });
+        }else if(command==="logout"){
+            //ログアウト
+            let sessid = this.sessionid.get(ws);
+            if(sessid==null){
+                //セッションがなかった
+                this.sendError(ws, new Error("No Session"));
+                return;
+            }
+            coll.updateOne({
+                id: sessid
+            },{
+                $set: {
+                    eccs: null
+                }
+            }).then((result)=>{
+                this.send(ws,{
+                    command: "toppage"
+                });
             }).catch((err)=>{
                 this.sendError(ws, err);
             });
@@ -244,6 +275,35 @@ export default class Session{
             }).catch((err)=>{
                 this.sendError(ws, err);
             });
+        }else if(command==="rojin-login"){
+            //老人ログイン
+            if("string"!==typeof obj.name || "string"!==typeof obj.pass){
+                this.sendError(ws, new Error("は？"));
+                return;
+            }
+            this.getSystemInfo().then((system:SystemInfo)=>{
+                if(sha256sum(obj.pass) !== system.roujin_pass){
+                    throw new Error("パスワードが違います。");
+                }
+                return coll.updateOne({
+                    id: sessid
+                },{
+                    $set: {
+                        rojin: true,
+                        rojin_name:obj.name,
+                    }
+                }).then((result)=>{
+                    if(result.result && result.result.n === 0){
+                        //セッションがなかった
+                        this.sendError(ws, new Error("Session Expired"));
+                        this.sessionid.delete(ws);
+                    }else{
+                        this.navigateRojin(ws);
+                    }
+                });
+            }).catch((err)=>{
+                this.sendError(ws, err);
+            });
         }
     }
     private makeNewSession():Promise<string>{
@@ -307,6 +367,11 @@ export default class Session{
         })
         .catch((err)=>{
             console.error(err);
+        });
+    }
+    private navigateRojin(ws:WebSocket):void{
+        this.send(ws, {
+            command: "rojinpage"
         });
     }
 }

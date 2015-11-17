@@ -36,6 +36,13 @@ let pageStore = Reflux.createStore({
         //stateにアレを追加
         history.pushState(this.state, "", this.state.page==="top" ? "/" : "/"+this.state.page);
     },
+    onTopPage():void{
+        this.state = objectAssign({},this.state,{
+            page:"top"
+        });
+        this.history();
+        this.trigger(this.state);
+    },
     onEntryPage({eccs}):void{
         this.state = objectAssign({},this.state,{
             page:"entry",
@@ -56,6 +63,21 @@ let pageStore = Reflux.createStore({
     onCallokPage():void{
         this.state = objectAssign({},this.state,{
             page: "callok"
+        });
+        this.history();
+        this.trigger(this.state);
+    },
+    onRojinTop():void{
+        this.state = objectAssign({},this.state,{
+            page: "rojintop"
+        });
+        this.history();
+        this.trigger(this.state);
+    },
+    onRojinPage({
+    }):void{
+        this.state = objectAssign({},this.state,{
+            page: "rojin"
         });
         this.history();
         this.trigger(this.state);

@@ -77,6 +77,9 @@ export default class Ws{
                 errorActions.error(new Error(obj.error));
                 break;
             //ページ遷移
+            case "toppage":
+                pageActions.topPage({});
+                break;
             case "entrypage":
                 pageActions.entryPage({
                     eccs: obj.eccs
@@ -86,6 +89,13 @@ export default class Ws{
                 pageActions.mainPage({
                     user: obj.user,
                     call: obj.call
+                });
+                break;
+            case "rojintop":
+                pageActions.rojinTop({});
+                break;
+            case "rojinpage":
+                pageActions.rojinPage({
                 });
                 break;
         }

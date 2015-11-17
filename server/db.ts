@@ -6,6 +6,8 @@ import {Promise} from 'es6-promise';
 
 import {SessionDoc, UserDoc, SystemInfo} from '../lib/db';
 
+import sha256sum from './sha256sum';
+
 export default class Db{
     private db:/*mongodb.Db*/ any;
     constructor(){
@@ -88,9 +90,4 @@ export default class Db{
             }
         });
     }
-}
-
-function sha256sum(str:string):string{
-    //TODO
-    return "";
 }

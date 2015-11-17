@@ -11,6 +11,9 @@ import Entry from './page/entry';
 import Main from './page/main';
 import Callok from './page/callok';
 
+import RojinTop from './page/rojin-top';
+import Rojin from './page/rojin';
+
 export default class App extends React.Component<{
     ws: Ws
 },{
@@ -47,6 +50,12 @@ export default class App extends React.Component<{
                 break;
             case "callok":
                 main = <Callok ws={ws}/>;
+                break;
+            case "rojintop":
+                main = <RojinTop ws={ws}/>;
+                break;
+            case "rojin":
+                main = <Rojin ws={ws}/>;
                 break;
         }
         return <article className="app">
