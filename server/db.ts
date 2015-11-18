@@ -61,6 +61,12 @@ export default class Db{
             }),
             coll_c.createIndex({
                 date: 1,
+                occupied_by: 1
+            },{
+                unique: true
+            }),
+            coll_c.createIndex({
+                date: 1,
                 awake: 1,
                 confirmed: 1,
                 next_hour: 1,

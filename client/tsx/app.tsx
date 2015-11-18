@@ -32,10 +32,10 @@ export default class App extends React.Component<{
     }
     componentDidMount(){
         this.page_unsubscribe = pageStore.listen((page)=>{
-            this.setState({page});
+            (this as any).setState({page});
         });
         this.call_unsubscribe = callStore.listen((call)=>{
-            this.setState({call});
+            (this as any).setState({call});
         });
     }
     componentWillUnmount(){

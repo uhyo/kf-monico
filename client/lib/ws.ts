@@ -4,6 +4,7 @@ import * as extend from 'extend';
 
 import * as errorActions from '../action/error';
 import * as pageActions from '../action/page';
+import * as callActions from '../action/call';
 
 export default class Ws{
     private ws:WebSocket;
@@ -101,6 +102,21 @@ export default class Ws{
                     preparings: obj.preparings
                 });
                 break;
+            //老人リスト系
+            case "rojin-call":
+                callActions.call({
+                    date: obj.date,
+                    eccs: obj.eccs,
+                    rojin_name: obj.rojin_name
+                });
+                break;
+            case "rojin-call-cancel":
+                callActions.callCancel({
+                    date: obj.date,
+                    rojin_name: obj.rojin_name
+                });
+                break;
+
         }
         let ack:number=obj.ack;
         if("number"!==typeof ack){

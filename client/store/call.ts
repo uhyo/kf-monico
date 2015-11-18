@@ -33,6 +33,31 @@ let callStore = Reflux.createStore({
     onRojinPage({sleepings, preparings}):void{
         this.state=objectAssign({}, this.state, {sleepings, preparings});
         this.trigger(this.state);
+    },
+
+    onCall({date, eccs, rojin_name}):void{
+        this.state = objectAssign({}, this.state, {
+            sleepings: this.state.sleepings.map(call =>
+                           call.eccs===eccs ?
+                           objectAssign({},call,{
+                               occupied: true,
+                               occupied_by: rojin_name
+                           }) :
+                           call)
+        });
+        this.trigger(this.state);
+    },
+    onCallCancel({date, rojin_name}):void{
+        this.state = objectAssign({}, this.state, {
+            sleepings: this.state.sleepings.map(call =>
+                           call.date===date && call.occupied_by===rojin_name ?
+                           objectAssign({},call,{
+                               occupied: false,
+                               occupied_by: ""
+                           }) :
+                           call)
+        });
+        this.trigger(this.state);
     }
 });
 

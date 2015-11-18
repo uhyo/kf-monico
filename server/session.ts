@@ -311,10 +311,36 @@ export default class Session{
                             occupied_by: rojin_name
                         }
                     }).then(()=>{
-                        // TODO
                         this.publish({
                             command: "rojin-call",
                             eccs: obj.eccs,
+                            date: system.date,
+                            rojin_name
+                        });
+                    });
+                });
+            }).catch((err)=>{
+                this.sendError(ws, err);
+            });
+        }else if(command==="rojin-call-cancel"){
+            //老人が電話をかけるのをやめました！！！！！
+            this.getSystemInfo().then((system:SystemInfo)=>{
+                return this.getUserData(sessid).then(({eccs, rojin, rojin_name})=>{
+                    if(rojin===false){
+                        throw new Error("Session Expired");
+                    }
+                    let collc = this.db.collection(this.collection.call);
+                    return collc.updateMany({
+                        date: system.date,
+                        occupied_by: rojin_name
+                    },{
+                        $set:{
+                            occupied: false,
+                            occupied_by: ""
+                        }
+                    }).then(()=>{
+                        this.publish({
+                            command: "rojin-call-cancel",
                             date: system.date,
                             rojin_name
                         });

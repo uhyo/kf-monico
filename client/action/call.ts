@@ -11,3 +11,13 @@ export var init = Reflux.createAction<{
     preparings: Array<CallDocWithUser>;
 }>();
 
+export var call = Reflux.createAction<{
+    date: number;
+    eccs: string;
+    rojin_name: string;
+}>();
+
+export var callCancel = Reflux.createAction<{
+    date: number;
+    rojin_name: string;
+}>();

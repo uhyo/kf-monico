@@ -16,7 +16,7 @@ export default class Rojin extends Page{
 
         // 自分が担当しているやつを探す
         let mine = sleepings.filter(call => call.occupied_by === rojin_name)[0];
-        console.log(sleepings, this.props);
+        console.log(mine);
         let call_main = mine == null ?
                             null :
                             <div className="rojin-main">
@@ -27,7 +27,7 @@ export default class Rojin extends Page{
                                 <p className="rojin-main-time">モーニングコール時刻：{this.time(mine.next_hour, mine.next_minute)}</p>
                                 <p>
                                     <input type="button" value="起きた"/>
-                                    <input type="button" value="やめる"/>
+                                    <input type="button" value="やめる" onClick={this.callCancelHandler()}/>
                                 </p>
                             </div>;
         return <section className="page-rojin">
@@ -84,11 +84,20 @@ export default class Rojin extends Page{
         return <time dateTime={str}>{str}</time>;
     }
     private callHandler(eccs:string){
+        //フリーのときに起こすボタンを押した
         return (e)=>{
             //こいつを起こしたい！！！！！！！！！！！！！！
             this.props.ws.send({
                 command: "rojin-call",
                 eccs
+            });
+        };
+    }
+    private callCancelHandler(){
+        //やめるボタン（今起こしている人を開放）
+        return (e)=>{
+            this.props.ws.send({
+                command: "rojin-call-cancel"
             });
         };
     }
