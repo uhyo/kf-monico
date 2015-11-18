@@ -44,6 +44,10 @@ export default class Db{
                 unique: true
             }),
             coll_s.createIndex({
+                rojin: 1,
+                rojin_name: 1
+            }),
+            coll_s.createIndex({
                 time: 1
             },{
                 expireAfterSeconds: config.get<number>("session.life")

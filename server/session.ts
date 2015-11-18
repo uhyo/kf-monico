@@ -108,7 +108,10 @@ export default class Session{
                         //セッションがあった。
                         if(doc.rojin===true){
                             //老人セッションだ
-                            this.navigateRojin(ws, doc.rojin_name);
+                            this.navigateRojin([{
+                                ws,
+                                rojin_name: doc.rojin_name
+                            }]);
                         }else if(doc.eccs!=null){
                             //ECCSがあったからユーザーデータを取得
                             this.findUserToNavigate(ws, doc.eccs);
@@ -255,6 +258,8 @@ export default class Session{
                     command: "ok",
                     ack: obj.comid
                 });
+                //老人に通知（てきとう）
+                this.refreshAllRojin();
             }).catch((err)=>{
                 this.sendError(ws, err);
             });
@@ -281,7 +286,10 @@ export default class Session{
                         this.sendError(ws, new Error("Session Expired"));
                         this.sessionid.delete(ws);
                     }else{
-                        this.navigateRojin(ws, obj.name);
+                        this.navigateRojin([{
+                            ws,
+                            rojin_name: obj.name
+                        }]);
 
                     }
                 });
@@ -457,7 +465,10 @@ export default class Session{
             console.error(err);
         });
     }
-    private navigateRojin(ws:WebSocket, rojin_name:string):void{
+    private navigateRojin(rojins:Array<{
+        ws:WebSocket;
+        rojin_name:string
+    }>):void{
         //老人のメインページをセッティング
         this.getSystemInfo().then((system:SystemInfo)=>{
             let date = system.date;
@@ -467,14 +478,45 @@ export default class Session{
             }).sort([["awake",1],["next_hour",1], ["next_minute",1],["snooze",-1]]).toArray().then((docs)=>{
                 return this.addUserDoc(docs);
             }).then((calls)=>{
-                this.send(ws, {
-                    command: "rojinpage",
-                    rojin_name,
-                    calls
-                });
+                for(let i=0, l=rojins.length; i<l; i++){
+                    const {ws, rojin_name} = rojins[i];
+                    this.send(ws, {
+                        command: "rojinpage",
+                        rojin_name,
+                        calls
+                    });
+                }
             });
         }).catch((err)=>{
-            this.sendError(ws,err);
+            console.error(err);
+        });
+    }
+    private refreshAllRojin():void{
+        let coll = this.db.collection(this.collection.session);
+        coll.find({
+            rojin: true
+        }).project({
+            id: 1,
+            rojin_name: 1
+        }).toArray().then((docs:Array<SessionDoc>)=>{
+            //テーブルをつくる
+            let table = <{[sessid:string]:string}>{};
+            for(let i=0, l=docs.length; i<l; i++){
+                let {id, rojin_name} = docs[i];
+                table[id]=rojin_name;
+            }
+            //老人をあつめた
+            this.navigateRojin(this.wss.map((ws)=>{
+                let sessid = this.sessionid.get(ws);
+                if(sessid && table[sessid]){
+                    return {
+                        ws,
+                        rojin_name: table[sessid]
+                    };
+                }else{
+                    return null;
+                }
+            }).filter(obj => obj!=null));
         });
     }
     private addUserDoc(calls:Array<CallDoc>):Promise<Array<CallDocWithUser>>{
