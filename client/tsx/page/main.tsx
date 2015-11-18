@@ -17,6 +17,7 @@ export default class Main extends Page{
             <header>
                 <p><b>{this.props.user.name}</b>さん</p>
                 <p><a href="/">ログアウト</a></p>
+                <p><a href="/entry">プロフィール修正</a></p>
                 <h1>モーニングコール登録</h1>
             </header>
             <CallForm onSubmit={this.handleSubmit()} call={this.props.call}/>

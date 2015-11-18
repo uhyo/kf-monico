@@ -13,6 +13,18 @@ export default function links(ws:Ws):void{
                         command: "logout"
                     });
                     e.preventDefault();
+                }else if(p==="/home"){
+                    //プロフィール修正を要求
+                    ws.send({
+                        command: "request-home"
+                    });
+                    e.preventDefault();
+                }else if(p==="/entry"){
+                    //プロフィール修正を要求
+                    ws.send({
+                        command: "request-entry"
+                    });
+                    e.preventDefault();
                 }else if(p==="/rojin"){
                     pageActions.rojinTop({});
                     e.preventDefault();

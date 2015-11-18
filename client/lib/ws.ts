@@ -83,7 +83,8 @@ export default class Ws{
                 break;
             case "entrypage":
                 pageActions.entryPage({
-                    eccs: obj.eccs
+                    eccs: obj.eccs,
+                    user: obj.user
                 });
                 break;
             case "mainpage":

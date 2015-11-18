@@ -44,10 +44,11 @@ let pageStore = Reflux.createStore({
         this.history();
         this.trigger(this.state);
     },
-    onEntryPage({eccs}):void{
+    onEntryPage({eccs,user}):void{
         this.state = objectAssign({},this.state,{
             page:"entry",
-            eccs
+            eccs,
+            user
         });
         this.history();
         this.trigger(this.state);

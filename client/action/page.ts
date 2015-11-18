@@ -11,6 +11,7 @@ export var topPage = Reflux.createAction<{}>();
 
 export var entryPage = Reflux.createAction<{
     eccs: string;
+    user?: UserDoc;
 }>();
 
 export var mainPage = Reflux.createAction<{

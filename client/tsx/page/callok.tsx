@@ -9,7 +9,7 @@ export default class Callok extends Page{
     render(){
         return <div className="page-callok">
             <p>モーニングコールの登録を完了しました。</p>
-            <p><a href="/">戻る</a></p>
+            <p><a href="/home">戻る</a></p>
         </div>;
     }
 }

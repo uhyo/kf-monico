@@ -177,6 +177,48 @@ export default class Session{
             }).catch((err)=>{
                 this.sendError(ws, err);
             });
+        }else if(command==="request-home"){
+            //ホームを要求
+            this.getUserData(sessid).then(({eccs})=>{
+                if(eccs==null){
+                    //トップへとばす
+                    this.send(ws,{
+                        command: "toppage"
+                    });
+                }else{
+                    this.findUserToNavigate(ws, eccs);
+                }
+            }).catch((err)=>{
+                this.sendError(ws, err);
+            });
+        }else if(command==="request-entry"){
+            //プロフィール登録ページを要求
+            this.getUserData(sessid).then(({eccs})=>{
+                if(eccs==null){
+                    throw new Error("Session Expired");
+                }
+                let collu = this.db.collection(this.collection.user);
+                return collu.find({
+                    eccs
+                }).limit(1).next().then((doc:UserDoc)=>{
+                    if(doc==null){
+                        //ユーザー登録はまだみたいですね……
+                        this.send(ws, {
+                            command: "entrypage",
+                            eccs
+                        });
+                    }else{
+                        //データあった
+                        this.send(ws, {
+                            command: "entrypage",
+                            eccs,
+                            user: doc
+                        });
+                    }
+                });
+            }).catch((err)=>{
+                this.sendError(ws, err);
+            });
         }else if(command==="entry"){
             //ユーザー情報を登録
             if("string"!==typeof obj.name || "string"!==typeof obj.name_phonetic || "string"!==typeof obj.tel){
@@ -211,10 +253,7 @@ export default class Session{
                 });
             }).then((user:UserDoc)=>{
                 //処理おわり
-                this.send(ws,{
-                    command: "mainpage",
-                    user
-                });
+                this.findUserToNavigate(ws, user.eccs);
             }).catch((err)=>{
                 this.sendError(ws, err);
             });
