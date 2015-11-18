@@ -98,8 +98,7 @@ export default class Ws{
             case "rojinpage":
                 pageActions.rojinPage({
                     rojin_name: obj.rojin_name,
-                    sleepings: obj.sleepings,
-                    preparings: obj.preparings
+                    calls: obj.calls
                 });
                 break;
             //老人リスト系
@@ -114,6 +113,12 @@ export default class Ws{
                 callActions.callCancel({
                     date: obj.date,
                     rojin_name: obj.rojin_name
+                });
+                break;
+            case "rojin-wake":
+                callActions.wake({
+                    date: obj.date,
+                    eccs: obj.eccs
                 });
                 break;
 

@@ -12,12 +12,20 @@ export default class Rojin extends Page{
         super(props);
     }
     render(){
-        let {rojin_name, sleepings, preparings} = this.props;
+        const {rojin_name, calls} = this.props;
 
+        //寝ているひとと起きているひとに分割
+        const sleepings:Array<CallDocWithUser>=[], preparings:Array<CallDocWithUser>=[];
+        for(let i=0, l=calls.length; i<l; i++){
+            if(calls[i].awake){
+                preparings.push(calls[i]);
+            }else{
+                sleepings.push(calls[i]);
+            }
+        }
         // 自分が担当しているやつを探す
-        let mine = sleepings.filter(call => call.occupied_by === rojin_name)[0];
-        console.log(mine);
-        let call_main = mine == null ?
+        const mine = sleepings.filter(call => call.occupied_by === rojin_name)[0];
+        const call_main = mine == null ?
                             null :
                             <div className="rojin-main">
                                 <p>{"\u260e"}電話中</p>
@@ -26,7 +34,7 @@ export default class Rojin extends Page{
                                 <p className="rojin-main-tel">{mine.user.tel}</p>
                                 <p className="rojin-main-time">モーニングコール時刻：{this.time(mine.next_hour, mine.next_minute)}</p>
                                 <p>
-                                    <input type="button" value="起きた"/>
+                                    <input type="button" value="起きた" onClick={this.wakeHandler(mine.eccs)}/>
                                     <input type="button" value="やめる" onClick={this.callCancelHandler()}/>
                                 </p>
                             </div>;
@@ -98,6 +106,15 @@ export default class Rojin extends Page{
         return (e)=>{
             this.props.ws.send({
                 command: "rojin-call-cancel"
+            });
+        };
+    }
+    private wakeHandler(eccs:string){
+        //電話したら起きたときのボタン
+        return (e)=>{
+            this.props.ws.send({
+                command: "rojin-wake",
+                eccs
             });
         };
     }

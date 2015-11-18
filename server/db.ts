@@ -62,8 +62,6 @@ export default class Db{
             coll_c.createIndex({
                 date: 1,
                 occupied_by: 1
-            },{
-                unique: true
             }),
             coll_c.createIndex({
                 date: 1,

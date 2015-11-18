@@ -349,6 +349,39 @@ export default class Session{
             }).catch((err)=>{
                 this.sendError(ws, err);
             });
+        }else if(command==="rojin-wake"){
+            //老人が電話したら起きました！！！！！
+            if("string"!==typeof obj.eccs){
+                this.sendError(ws, new Error("は？"));
+                return;
+            }
+            this.getSystemInfo().then((system:SystemInfo)=>{
+                return this.getUserData(sessid).then(({eccs, rojin, rojin_name})=>{
+                    if(rojin===false){
+                        throw new Error("Session Expired");
+                    }
+                    let collc = this.db.collection(this.collection.call);
+                    return collc.updateMany({
+                        date: system.date,
+                        eccs: obj.eccs,
+                    },{
+                        $set:{
+                            awake: true,
+                            confirmed: false,
+                            occupied: false,
+                            occupied_by: ""
+                        }
+                    }).then(()=>{
+                        this.publish({
+                            command: "rojin-wake",
+                            date: system.date,
+                            eccs: obj.eccs
+                        });
+                    });
+                });
+            }).catch((err)=>{
+                this.sendError(ws, err);
+            });
         }
     }
     private publish(obj:any):void{
@@ -429,38 +462,26 @@ export default class Session{
         this.getSystemInfo().then((system:SystemInfo)=>{
             let date = system.date;
             let coll = this.db.collection(this.collection.call);
-            return Promise.all([
-                coll.find({
-                    date,
-                    awake: false,
-                }).sort([["next_hour",1], ["next_minute",1],["snooze",-1]]).toArray(),
-                coll.find({
-                    date,
-                    awake: true,
-                    confirmed: false
-                }).sort([["next_hour",1], ["next_minute",1]]).toArray()
-            ]).then((docss)=>{
-                return this.addUserDoc(docss);
-            }).then(([sleepings, preparings])=>{
+            return coll.find({
+                date,
+            }).sort([["awake",1],["next_hour",1], ["next_minute",1],["snooze",-1]]).toArray().then((docs)=>{
+                return this.addUserDoc(docs);
+            }).then((calls)=>{
                 this.send(ws, {
                     command: "rojinpage",
                     rojin_name,
-                    sleepings,
-                    preparings
+                    calls
                 });
             });
         }).catch((err)=>{
             this.sendError(ws,err);
         });
     }
-    private addUserDoc(docss:Array<Array<CallDoc>>):Promise<Array<Array<CallDocWithUser>>>{
+    private addUserDoc(calls:Array<CallDoc>):Promise<Array<CallDocWithUser>>{
         //ECCSを集計
         let eccss:Array<string>=[];
-        for(let i=0, l=docss.length; i<l; i++){
-            let a=docss[i];
-            for(let j=0, m=a.length; j<m; j++){
-                eccss.push(a[j].eccs);
-            }
+        for(let i=0, l=calls.length; i<l; i++){
+            eccss.push(calls[i].eccs);
         }
         let coll = this.db.collection(this.collection.user);
         return coll.find({
@@ -474,10 +495,8 @@ export default class Session{
                 table[docs[i].eccs] = docs[i];
             }
             //付加
-            return docss.map(calls=>
-                calls.map(call=>
-                    objectAssign(call, {user: table[call.eccs]})
-                )
+            return calls.map(call=>
+                objectAssign(call, {user: table[call.eccs]})
             );
         });
     }

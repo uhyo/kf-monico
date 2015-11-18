@@ -10,8 +10,7 @@ import * as callActions from '../action/call';
 import {UserDoc, CallDoc, CallDocWithUser} from '../../lib/db';
 
 export interface CallStoreData{
-    sleepings:Array<CallDocWithUser>;
-    preparings:Array<CallDocWithUser>;
+    calls:Array<CallDocWithUser>;
 }
 
 let callStore = Reflux.createStore({
@@ -20,24 +19,23 @@ let callStore = Reflux.createStore({
     },
     init():void{
         this.state = {
-            sleepings: [],
-            preparings: []
+            calls: [],
         };
         this.listenToMany(callActions);
         this.listenTo(pageActions.rojinPage,this.onRojinPage);
     },
-    onInit({sleepings, preparings}):void{
-        this.state=objectAssign({}, this.state, {sleepings, preparings});
+    onInit({calls}):void{
+        this.state=objectAssign({}, this.state, {calls});
         this.trigger(this.state);
     },
-    onRojinPage({sleepings, preparings}):void{
-        this.state=objectAssign({}, this.state, {sleepings, preparings});
+    onRojinPage({calls}):void{
+        this.state=objectAssign({}, this.state, {calls});
         this.trigger(this.state);
     },
 
     onCall({date, eccs, rojin_name}):void{
         this.state = objectAssign({}, this.state, {
-            sleepings: this.state.sleepings.map(call =>
+            calls: this.state.calls.map(call =>
                            call.eccs===eccs ?
                            objectAssign({},call,{
                                occupied: true,
@@ -49,7 +47,7 @@ let callStore = Reflux.createStore({
     },
     onCallCancel({date, rojin_name}):void{
         this.state = objectAssign({}, this.state, {
-            sleepings: this.state.sleepings.map(call =>
+            calls: this.state.calls.map(call =>
                            call.date===date && call.occupied_by===rojin_name ?
                            objectAssign({},call,{
                                occupied: false,
@@ -58,7 +56,21 @@ let callStore = Reflux.createStore({
                            call)
         });
         this.trigger(this.state);
-    }
+    },
+    onWake({date, eccs}):void{
+        this.state = objectAssign({}, this.state, {
+            calls: this.state.calls.map(call =>
+                           call.date===date && call.eccs===eccs ?
+                           objectAssign({},call,{
+                               awake: true,
+                               confirmed: false,
+                               occupied: false,
+                               occupied_by: ""
+                           }) :
+                           call)
+        });
+        this.trigger(this.state);
+    },
 });
 
 export default callStore;

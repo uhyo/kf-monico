@@ -21,3 +21,8 @@ export var callCancel = Reflux.createAction<{
     date: number;
     rojin_name: string;
 }>();
+
+export var wake = Reflux.createAction<{
+    date: number;
+    eccs: string;
+}>();

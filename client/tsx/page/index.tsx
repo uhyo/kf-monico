@@ -13,8 +13,7 @@ export interface PageProps{
     call?:CallDoc;
     //rojinpage
     rojin_name?:string;
-    sleepings?:Array<CallDocWithUser>;
-    preparings?:Array<CallDocWithUser>;
+    calls?:Array<CallDocWithUser>;
 }
 export interface PageState{
 }

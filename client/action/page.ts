@@ -26,6 +26,5 @@ export var rojinTop = Reflux.createAction<{}>();
 
 export var rojinPage = Reflux.createAction<{
     rojin_name: string;
-    sleepings: Array<CallDocWithUser>;
-    preparings: Array<CallDocWithUser>;
+    calls: Array<CallDocWithUser>;
 }>();
