@@ -18,7 +18,8 @@ export default class Ws{
         this.ack_queue = [];
     }
     init():void{
-        let ws = this.ws = new WebSocket(location.origin.replace(/^http/,"ws")+"/");
+        let basepath = document.body.getAttribute("data-basepath");
+        let ws = this.ws = new WebSocket(location.origin.replace(/^http/,"ws")+basepath);
         ws.addEventListener("error",(e)=>{
             errorActions.error(new Error(e.message));
         });
