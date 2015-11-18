@@ -35,7 +35,8 @@ let pageStore = Reflux.createStore({
     },
     history():void{
         //stateにアレを追加
-        history.pushState(this.state, "", this.state.page==="top" ? "/" : "/"+this.state.page);
+        let basepath = document.body.getAttribute("data-basepath");
+        history.pushState(this.state, "", this.state.page==="top" ? basepath : basepath+this.state.page);
     },
     onTopPage():void{
         this.state = objectAssign({},this.state,{
