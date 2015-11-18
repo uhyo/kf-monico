@@ -37,16 +37,16 @@ export default class App extends React.Component<{
     render(){
         let main:JSX.Element;
         let ws = this.props.ws;
-        let page = this.state.page.page;
-        switch(page){
+        let page = this.state.page;
+        switch(page.page){
             case "top":
                 main = <Top ws={ws}/>;
                 break;
             case "entry":
-                main = <Entry ws={ws} eccs={this.state.page.eccs}/>;
+                main = <Entry ws={ws} eccs={page.eccs}/>;
                 break;
             case "main":
-                main = <Main ws={ws} user={this.state.page.user} call={this.state.page.call}/>;
+                main = <Main ws={ws} user={page.user} call={page.call}/>;
                 break;
             case "callok":
                 main = <Callok ws={ws}/>;
@@ -55,7 +55,7 @@ export default class App extends React.Component<{
                 main = <RojinTop ws={ws}/>;
                 break;
             case "rojin":
-                main = <Rojin ws={ws}/>;
+                main = <Rojin ws={ws} sleepings={page.sleepings} preparings={page.preparings}/>;
                 break;
         }
         return <article className="app">

@@ -96,6 +96,9 @@ export default class Ws{
                 break;
             case "rojinpage":
                 pageActions.rojinPage({
+                    rojin_name: obj.rojin_name,
+                    sleepings: obj.sleepings,
+                    preparings: obj.preparings
                 });
                 break;
         }

@@ -37,6 +37,10 @@ export interface CallDoc extends CallEntry{
     occupied_by:string;
 }
 
+export interface CallDocWithUser extends CallDoc{
+    user: UserDoc;
+}
+
 export interface SystemInfo{
     date: number;
     roujin_pass: string;

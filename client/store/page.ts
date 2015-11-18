@@ -6,13 +6,16 @@ import * as objectAssign from 'object-assign';
 
 import * as pageActions from '../action/page';
 
-import {UserDoc, CallDoc} from '../../lib/db';
+import {UserDoc, CallDoc, CallDocWithUser} from '../../lib/db';
 
 export interface PageStoreData{
     page: string;
     eccs?:string;
     user?:UserDoc;
     call?:CallDoc;
+    rojin_name?:string;
+    sleepings?:Array<CallDocWithUser>;
+    preparings?:Array<CallDocWithUser>;
 }
 
 let pageStore = Reflux.createStore({
@@ -75,9 +78,15 @@ let pageStore = Reflux.createStore({
         this.trigger(this.state);
     },
     onRojinPage({
+        rojin_name,
+        sleepings,
+        preparings
     }):void{
         this.state = objectAssign({},this.state,{
-            page: "rojin"
+            page: "rojin",
+            rojin_name,
+            sleepings,
+            preparings
         });
         this.history();
         this.trigger(this.state);

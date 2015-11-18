@@ -4,10 +4,11 @@
 import Db from './db';
 import Web from './web';
 
-import {SessionDoc, UserDoc, CallDoc, SystemInfo} from '../lib/db';
+import {SessionDoc, UserDoc, CallDoc, CallDocWithUser, SystemInfo} from '../lib/db';
 
 import * as config from 'config';
 import * as randomString from 'random-string';
+import * as objectAssign from 'object-assign';
 
 import * as validator from './validator';
 import sha256sum from './sha256sum';
@@ -107,7 +108,7 @@ export default class Session{
                         //セッションがあった。
                         if(doc.rojin===true){
                             //老人セッションだ
-                            this.navigateRojin(ws);
+                            this.navigateRojin(ws, doc.rojin_name);
                         }else if(doc.eccs!=null){
                             //ECCSがあったからユーザーデータを取得
                             this.findUserToNavigate(ws, doc.eccs);
@@ -304,7 +305,8 @@ export default class Session{
                         this.sendError(ws, new Error("Session Expired"));
                         this.sessionid.delete(ws);
                     }else{
-                        this.navigateRojin(ws);
+                        this.navigateRojin(ws, obj.name);
+
                     }
                 });
             }).catch((err)=>{
@@ -379,9 +381,61 @@ export default class Session{
             console.error(err);
         });
     }
-    private navigateRojin(ws:WebSocket):void{
-        this.send(ws, {
-            command: "rojinpage"
+    private navigateRojin(ws:WebSocket, rojin_name:string):void{
+        //老人のメインページをセッティング
+        this.getSystemInfo().then((system:SystemInfo)=>{
+            let date = system.date;
+            let coll = this.db.collection(this.collection.call);
+            return Promise.all([
+                coll.find({
+                    date,
+                    awake: false,
+                }).sort([["next_hour",1], ["next_minute",1],["snooze",-1]]).toArray(),
+                coll.find({
+                    date,
+                    awake: true,
+                    confirmed: false
+                }).sort([["next_hour",1], ["next_minute",1]]).toArray()
+            ]).then((docss)=>{
+                return this.addUserDoc(docss);
+            }).then(([sleepings, preparings])=>{
+                this.send(ws, {
+                    command: "rojinpage",
+                    rojin_name,
+                    sleepings,
+                    preparings
+                });
+            });
+        }).catch((err)=>{
+            this.sendError(ws,err);
+        });
+    }
+    private addUserDoc(docss:Array<Array<CallDoc>>):Promise<Array<Array<CallDocWithUser>>>{
+        //ECCSを集計
+        let eccss:Array<string>=[];
+        for(let i=0, l=docss.length; i<l; i++){
+            let a=docss[i];
+            for(let j=0, m=a.length; j<m; j++){
+                eccss.push(a[j].eccs);
+            }
+        }
+        let coll = this.db.collection(this.collection.user);
+        return coll.find({
+            eccs: {
+                $in: eccss
+            }
+        }).toArray().then((docs:Array<UserDoc>)=>{
+            //テーブル
+            let table=<{[eccs:string]:UserDoc}>{};
+            for(let i=0, l=docs.length; i<l; i++){
+                table[docs[i].eccs] = docs[i];
+            }
+            //付加
+            return docss.map(calls=>
+                calls.map(call=>
+                    objectAssign(call, {user: table[call.eccs]})
+                )
+            );
         });
     }
 }
