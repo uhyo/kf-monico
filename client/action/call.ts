@@ -26,3 +26,7 @@ export var wake = Reflux.createAction<{
     date: number;
     eccs: string;
 }>();
+export var confirm = Reflux.createAction<{
+    date: number;
+    eccs: string;
+}>();

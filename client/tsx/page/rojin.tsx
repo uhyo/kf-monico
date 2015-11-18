@@ -17,10 +17,10 @@ export default class Rojin extends Page{
         //寝ているひとと起きているひとに分割
         const sleepings:Array<CallDocWithUser>=[], preparings:Array<CallDocWithUser>=[];
         for(let i=0, l=calls.length; i<l; i++){
-            if(calls[i].awake){
-                preparings.push(calls[i]);
-            }else{
+            if(calls[i].awake===false){
                 sleepings.push(calls[i]);
+            }else if(calls[i].confirmed===false){
+                preparings.push(calls[i]);
             }
         }
         // 自分が担当しているやつを探す
@@ -68,11 +68,11 @@ export default class Rojin extends Page{
                 if(call.awake === false){
                     call_btn = <div>
                         <p><input type="button" value="電話をかける" onClick={this.callHandler(call.eccs)}/></p>
-                        <p><input type="button" value="本部に来た" /></p>
+                        <p><input type="button" value="本部に来た" onClick={this.confirmHandler(call.eccs)}/></p>
                     </div>;
                 }else{
                     call_btn = <div>
-                        <p><input type="button" value="本部に来た" /></p>
+                        <p><input type="button" value="本部に来た" onClick={this.confirmHandler(call.eccs)}/></p>
                     </div>;
                 }
             }
@@ -114,6 +114,15 @@ export default class Rojin extends Page{
         return (e)=>{
             this.props.ws.send({
                 command: "rojin-wake",
+                eccs
+            });
+        };
+    }
+    private confirmHandler(eccs:string){
+        //本部に来た（任務完了）ボタン
+        return (e)=>{
+            this.props.ws.send({
+                command: "rojin-confirm",
                 eccs
             });
         };

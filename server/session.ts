@@ -390,6 +390,39 @@ export default class Session{
             }).catch((err)=>{
                 this.sendError(ws, err);
             });
+        }else if(command==="rojin-confirm"){
+            //誰かが本部に来た
+            if("string"!==typeof obj.eccs){
+                this.sendError(ws, new Error("は？"));
+                return;
+            }
+            this.getSystemInfo().then((system:SystemInfo)=>{
+                return this.getUserData(sessid).then(({eccs, rojin, rojin_name})=>{
+                    if(rojin===false){
+                        throw new Error("Session Expired");
+                    }
+                    let collc = this.db.collection(this.collection.call);
+                    return collc.updateMany({
+                        date: system.date,
+                        eccs: obj.eccs,
+                    },{
+                        $set:{
+                            awake: true,
+                            confirmed: true,
+                            occupied: false,
+                            occupied_by: ""
+                        }
+                    }).then(()=>{
+                        this.publish({
+                            command: "rojin-confirm",
+                            date: system.date,
+                            eccs: obj.eccs
+                        });
+                    });
+                });
+            }).catch((err)=>{
+                this.sendError(ws, err);
+            });
         }
     }
     private publish(obj:any):void{

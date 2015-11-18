@@ -121,6 +121,12 @@ export default class Ws{
                     eccs: obj.eccs
                 });
                 break;
+            case "rojin-confirm":
+                callActions.confirm({
+                    date: obj.date,
+                    eccs: obj.eccs
+                });
+                break;
 
         }
         let ack:number=obj.ack;

@@ -71,6 +71,20 @@ let callStore = Reflux.createStore({
         });
         this.trigger(this.state);
     },
+    onConfirm({date, eccs}):void{
+        this.state = objectAssign({}, this.state, {
+            calls: this.state.calls.map(call =>
+                           call.date===date && call.eccs===eccs ?
+                           objectAssign({},call,{
+                               awake: true,
+                               confirmed: true,
+                               occupied: false,
+                               occupied_by: ""
+                           }) :
+                           call)
+        });
+        this.trigger(this.state);
+    },
 });
 
 export default callStore;
