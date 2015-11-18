@@ -14,8 +14,6 @@ export interface PageStoreData{
     user?:UserDoc;
     call?:CallDoc;
     rojin_name?:string;
-    sleepings?:Array<CallDocWithUser>;
-    preparings?:Array<CallDocWithUser>;
 }
 
 let pageStore = Reflux.createStore({
@@ -78,15 +76,11 @@ let pageStore = Reflux.createStore({
         this.trigger(this.state);
     },
     onRojinPage({
-        rojin_name,
-        sleepings,
-        preparings
+        rojin_name
     }):void{
         this.state = objectAssign({},this.state,{
             page: "rojin",
             rojin_name,
-            sleepings,
-            preparings
         });
         this.history();
         this.trigger(this.state);

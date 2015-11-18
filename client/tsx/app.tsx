@@ -3,6 +3,7 @@ import * as React from 'react';
 import Ws from '../lib/ws';
 
 import {default as pageStore, PageStoreData} from '../store/page';
+import {default as callStore, CallStoreData} from '../store/call';
 
 import {Page, PageProps, PageState} from './page/index';
 
@@ -17,27 +18,34 @@ import Rojin from './page/rojin';
 export default class App extends React.Component<{
     ws: Ws
 },{
-    page: PageStoreData
+    page: PageStoreData,
+    call: CallStoreData
 }>{
     private page_unsubscribe: ()=>void;
+    private call_unsubscribe: ()=>void;
     constructor(){
         super();
         this.state = {
-            page: pageStore.getInitialState()
+            page: pageStore.getInitialState(),
+            call: callStore.getInitialState()
         };
     }
     componentDidMount(){
         this.page_unsubscribe = pageStore.listen((page)=>{
             this.setState({page});
         });
+        this.call_unsubscribe = callStore.listen((call)=>{
+            this.setState({call});
+        });
     }
     componentWillUnmount(){
         this.page_unsubscribe();
+        this.call_unsubscribe();
     }
     render(){
         let main:JSX.Element;
         let ws = this.props.ws;
-        let page = this.state.page;
+        let {page, call} = this.state;
         switch(page.page){
             case "top":
                 main = <Top ws={ws}/>;
@@ -55,7 +63,7 @@ export default class App extends React.Component<{
                 main = <RojinTop ws={ws}/>;
                 break;
             case "rojin":
-                main = <Rojin ws={ws} rojin_name={page.rojin_name} sleepings={page.sleepings} preparings={page.preparings}/>;
+                main = <Rojin ws={ws} rojin_name={page.rojin_name} sleepings={call.sleepings} preparings={call.preparings}/>;
                 break;
         }
         return <article className="app">
