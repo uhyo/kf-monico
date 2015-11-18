@@ -20,9 +20,11 @@ export default class Entry extends Page{
             tel: null
         };
         return <section className="page-entry">
-            <h1>ユーザー登録</h1>
-            <p>ユーザー情報を入力してください。</p>
-            <p><a href="/">戻る</a></p>
+            <header>
+                <h1>ユーザー登録</h1>
+                <p>ユーザー情報を入力してください。</p>
+                <p><a href="/">戻る</a></p>
+            </header>
             <UserForm user={user} onSubmit={this.handleSubmit()}/>
         </section>;
     }

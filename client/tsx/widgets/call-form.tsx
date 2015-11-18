@@ -17,7 +17,7 @@ export default class CallForm extends React.Component<{
         };
         return <form onSubmit={this.handleSubmit()}>
             <p>モーニングコールの時刻を入力してください。</p>
-            <p>
+            <p className="main-call-form-time">
                 <select ref="hour" defaultValue={call.hour && String(call.hour)}>{this.makeNumopts(0,23)}</select>
                 時
                 <select ref="minute" defaultValue={call.minute && String(call.minute)}>{this.makeNumopts(0,59)}</select>

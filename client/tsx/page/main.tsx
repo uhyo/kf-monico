@@ -14,11 +14,11 @@ export default class Main extends Page{
     }
     render(){
         return <section className="page-main">
-            <div className="main-profile">
+            <header>
                 <p><b>{this.props.user.name}</b>さん</p>
                 <p><a href="/">ログアウト</a></p>
-            </div>
-            <h1>モーニングコール登録</h1>
+                <h1>モーニングコール登録</h1>
+            </header>
             <CallForm onSubmit={this.handleSubmit()} call={this.props.call}/>
         </section>;
     }

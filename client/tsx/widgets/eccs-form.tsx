@@ -12,7 +12,7 @@ export default class EccsForm extends React.Component<{
     render(){
         return <form onSubmit={this.submitHandler()}>
             <p>ECCSユーザIDを入力してください：</p>
-            <p><input ref="eccs" type="text" required pattern="\\d{10}" title="10桁のECCSユーザIDを入力してください。"/></p>
+            <p><input ref="eccs" type="text" required placeholder="1234567890" pattern="\\d{10}" title="10桁のECCSユーザIDを入力してください。"/></p>
             <p><input type="submit" value="ログイン" /></p>
         </form>;
     }

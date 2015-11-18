@@ -1,0 +1,20 @@
+//pages
+.page-top, .page-entry, .page-main {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+
+  text-align: center;
+
+  input {
+    width: 100%;
+  }
+
+  & > header {
+    text-align: left;
+  }
+}
+
+.main-call-form-time {
+  font-size: 32px;
+}
