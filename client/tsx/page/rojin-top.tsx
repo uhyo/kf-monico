@@ -20,6 +20,7 @@ export default class RojinTop extends Page{
     }
     private handleSubmit(){
         return ({name,pass})=>{
+            localStorage.setItem("monico_rojin_name", name);
             this.props.ws.send({
                 command:"rojin-login",
                 name,

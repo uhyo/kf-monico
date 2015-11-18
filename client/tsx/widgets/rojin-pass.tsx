@@ -12,7 +12,7 @@ export default class RojinPass extends React.Component<{
     render(){
         return <form onSubmit={this.submitHandler()}>
             <p>おなまえ</p>
-            <p><input ref="name" type="text" required placeholder="てらだ"/></p>
+            <p><input ref="name" type="text" required placeholder="てらだ" defaultValue={localStorage.getItem("monico_rojin_name")}/></p>
             <p>老人パスワードを入力してください：</p>
             <p><input ref="pass" type="password" required/></p>
             <p><input type="submit" value="老人ログイン" /></p>
