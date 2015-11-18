@@ -69,11 +69,11 @@ export default class Db{
             }),
             coll_c.createIndex({
                 date: 1,
-                awake: 1,
-                confirmed: 1,
                 next_hour: 1,
                 next_minute: 1,
-                snooze: -1
+                snooze: -1,
+                awake: 1,
+                confirmed: 1,
             }),
             coll_sys.createIndex({
                 key: 1

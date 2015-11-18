@@ -547,7 +547,7 @@ export default class Session{
             let coll = this.db.collection(this.collection.call);
             return coll.find({
                 date,
-            }).sort([["awake",1],["next_hour",1], ["next_minute",1],["snooze",-1]]).toArray().then((docs)=>{
+            }).sort([["next_hour",1], ["next_minute",1],["snooze",-1]]).toArray().then((docs)=>{
                 return this.addUserDoc(docs);
             }).then((calls)=>{
                 for(let i=0, l=rojins.length; i<l; i++){

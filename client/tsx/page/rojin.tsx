@@ -27,38 +27,38 @@ export default class Rojin extends Page{
         const mine = sleepings.filter(call => call.occupied_by === rojin_name)[0];
         const call_main = mine == null ?
                             null :
-                            <div className="rojin-main">
-                                <p>{"\u260e"}電話中</p>
-                                <p className="rojin-main-name">{mine.user.name}</p>
-                                <p className="rojin-main-phonetic">（{mine.user.name_phonetic}）</p>
-                                <p className="rojin-main-tel">{mine.user.tel}</p>
-                                <p className="rojin-main-time">モーニングコール時刻：{this.time(mine.next_hour, mine.next_minute)}</p>
-                                <p>
-                                    <input type="button" value="起きた" onClick={this.wakeHandler(mine.eccs)}/>
-                                    <input type="button" value="やめる" onClick={this.callCancelHandler()}/>
-                                </p>
-                            </div>;
+                            <section className="rojin-main">
+                                <h1>{"\u260e"}電話中</h1>
+                                <p><b className="rojin-main-name">{mine.user.name}</b><span className="rojin-main-phonetic">（{mine.user.name_phonetic}）</span></p>
+                                <p className="rojin-main-tel">{"\u260e"+mine.user.tel}</p>
+                                <p className="rojin-main-time">モーニングコール時刻：<b>{this.time(mine.next_hour, mine.next_minute)}</b></p>
+                                <p className="rojin-main-snooze">（スヌーズ：{mine.snooze}回）</p>
+                                <div className="rojin-main-buttons">
+                                    <p><input type="button" value="起きた" onClick={this.wakeHandler(mine.eccs)}/></p>
+                                    <p><input type="button" value="やめる" onClick={this.callCancelHandler()}/></p>
+                                </div>
+                            </section>;
         return <section className="page-rojin">
             <h1>老人ホーム</h1>
             <p>老人ページです。</p>
-            <div>
-                <section>
+            <p><a href="/">もどる</a></p>
+            <div className="rojin-wrapper">
+                <section className="rojin-sleepings">
                     <h1>寝ている人</h1>
                     {call_main}
                     <p>寝ている人は<b>{sleepings.length}人</b>います。</p>
-                    <div className="rojin-sleepings">{
+                    <div className="rojin-sleepings-box">{
                         this.callList(sleepings,false)
                     }</div>
                 </section>
-                <section>
+                <section className="rojin-preparings">
                     <h1>起きている人</h1>
                     <p>本部に到着していない人は<b>{preparings.length}人</b>います。</p>
-                    <div className="rojin-preparings">{
+                    <div className="rojin-preparings-box">{
                         this.callList(preparings,true)
                     }</div>
                 </section>
             </div>
-            <p><a href="/">もどる</a></p>
         </section>;
     }
     private callList(list:Array<CallDocWithUser>,awake:boolean){
@@ -66,20 +66,20 @@ export default class Rojin extends Page{
             let call_btn = null;
             if(call.occupied === false){
                 if(call.awake === false){
-                    call_btn = <div>
-                        <p><input type="button" value="電話をかける" onClick={this.callHandler(call.eccs)}/></p>
-                        <p><input type="button" value="本部に来た" onClick={this.confirmHandler(call.eccs)}/></p>
+                    call_btn = <div className="rojin-call-buttons">
+                        <p><input type="button" value="電話をかける" className="rojin-call-button-call" onClick={this.callHandler(call.eccs)}/></p>
+                        <p><input type="button" value="本部に来た" className="rojin-call-button-confirm" onClick={this.confirmHandler(call.eccs)}/></p>
                     </div>;
                 }else{
-                    call_btn = <div>
-                        <p><input type="button" value="本部に来た" onClick={this.confirmHandler(call.eccs)}/></p>
+                    call_btn = <div className="rojin-call-buttons">
+                        <p><input type="button" value="本部に来た" className="rojin-call-button-confirm" onClick={this.confirmHandler(call.eccs)}/></p>
                     </div>;
                 }
             }
             return <div key={call.eccs} className="rojin-call-obj">
                 <div className="rojin-call-obj-name">{call.user.name}</div>
                 <div className="rojin-call-obj-info">
-                    <p>モーニングコール時刻：<b>{this.time(call.next_hour, call.next_minute)}</b>　<small>（スヌーズ：{call.snooze}回）</small></p>
+                    <p>モーニングコール時刻：<b className="rojin-call-obj-time">{this.time(call.next_hour, call.next_minute)}</b>　<small>（スヌーズ：{call.snooze}回）</small></p>
                     <p>担当老人：{call.occupied ? call.occupied_by : "なし"}</p>
                 </div>
                 {call_btn}
