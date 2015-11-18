@@ -16,10 +16,11 @@ export default class Rojin extends Page{
 
         // 自分が担当しているやつを探す
         let mine = sleepings.filter(call => call.occupied_by === rojin_name)[0];
+        console.log(sleepings, this.props);
         let call_main = mine == null ?
                             null :
                             <div className="rojin-main">
-                                <p>&#x260e;電話中</p>
+                                <p>{"\u260e"}電話中</p>
                                 <p className="rojin-main-name">{mine.user.name}</p>
                                 <p className="rojin-main-phonetic">（{mine.user.name_phonetic}）</p>
                                 <p className="rojin-main-tel">{mine.user.tel}</p>
@@ -58,7 +59,7 @@ export default class Rojin extends Page{
             if(call.occupied === false){
                 if(call.awake === false){
                     call_btn = <div>
-                        <p><input type="button" value="電話をかける" /></p>
+                        <p><input type="button" value="電話をかける" onClick={this.callHandler(call.eccs)}/></p>
                         <p><input type="button" value="本部に来た" /></p>
                     </div>;
                 }else{
@@ -70,7 +71,7 @@ export default class Rojin extends Page{
             return <div key={call.eccs} className="rojin-call-obj">
                 <div className="rojin-call-obj-name">{call.user.name}</div>
                 <div className="rojin-call-obj-info">
-                    <p>モーニングコール時刻：<b>{this.time(call.next_hour, call.next_minute)}</b></p>
+                    <p>モーニングコール時刻：<b>{this.time(call.next_hour, call.next_minute)}</b>　<small>（スヌーズ：{call.snooze}回）</small></p>
                     <p>担当老人：{call.occupied ? call.occupied_by : "なし"}</p>
                 </div>
                 {call_btn}
@@ -81,6 +82,15 @@ export default class Rojin extends Page{
         let hs = ("0"+hour).slice(-2), mn = ("0"+minute).slice(-2),
             str = hs+":"+mn;
         return <time dateTime={str}>{str}</time>;
+    }
+    private callHandler(eccs:string){
+        return (e)=>{
+            //こいつを起こしたい！！！！！！！！！！！！！！
+            this.props.ws.send({
+                command: "rojin-call",
+                eccs
+            });
+        };
     }
 }
 

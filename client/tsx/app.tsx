@@ -55,7 +55,7 @@ export default class App extends React.Component<{
                 main = <RojinTop ws={ws}/>;
                 break;
             case "rojin":
-                main = <Rojin ws={ws} sleepings={page.sleepings} preparings={page.preparings}/>;
+                main = <Rojin ws={ws} rojin_name={page.rojin_name} sleepings={page.sleepings} preparings={page.preparings}/>;
                 break;
         }
         return <article className="app">

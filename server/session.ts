@@ -140,12 +140,6 @@ export default class Session{
                 this.sendError(ws, new Error("Validation Error"));
                 return;
             }
-            let sessid = this.sessionid.get(ws);
-            if(sessid==null){
-                //セッションがなかった
-                this.sendError(ws, new Error("No Session"));
-                return;
-            }
             coll.updateOne({
                 id: sessid
             },{
@@ -165,12 +159,6 @@ export default class Session{
             });
         }else if(command==="logout"){
             //ログアウト
-            let sessid = this.sessionid.get(ws);
-            if(sessid==null){
-                //セッションがなかった
-                this.sendError(ws, new Error("No Session"));
-                return;
-            }
             coll.updateOne({
                 id: sessid
             },{
@@ -188,12 +176,6 @@ export default class Session{
             });
         }else if(command==="entry"){
             //ユーザー情報を登録
-            let sessid = this.sessionid.get(ws);
-            if(sessid==null){
-                //セッションがなかった
-                this.sendError(ws, new Error("No Session"));
-                return;
-            }
             if("string"!==typeof obj.name || "string"!==typeof obj.name_phonetic || "string"!==typeof obj.tel){
                 this.sendError(ws, new Error("は？"));
                 return;
@@ -234,12 +216,6 @@ export default class Session{
                 this.sendError(ws, err);
             });
         }else if(command==="call"){
-            let sessid = this.sessionid.get(ws);
-            if(sessid==null){
-                //セッションがなかった
-                this.sendError(ws, new Error("No Session"));
-                return;
-            }
             if("number"!==typeof obj.hour || "number"!==typeof obj.minute){
                 this.sendError(ws, new Error("は？"));
                 return;
@@ -312,6 +288,47 @@ export default class Session{
             }).catch((err)=>{
                 this.sendError(ws, err);
             });
+        }else if(command==="rojin-call"){
+            //老人が電話をかけます！！！
+            if("string"!==typeof obj.eccs){
+                this.sendError(ws, new Error("は？"));
+                return;
+            }
+            this.getSystemInfo().then((system:SystemInfo)=>{
+                return this.getUserData(sessid).then(({eccs, rojin, rojin_name})=>{
+                    if(rojin===false){
+                        throw new Error("Session Expired");
+                    }
+                    let collc = this.db.collection(this.collection.call);
+                    return collc.updateOne({
+                        eccs: obj.eccs,
+                        date: system.date,
+                        awake: false,
+                        occupied: false
+                    },{
+                        $set:{
+                            occupied: true,
+                            occupied_by: rojin_name
+                        }
+                    }).then(()=>{
+                        // TODO
+                        this.publish({
+                            command: "rojin-call",
+                            eccs: obj.eccs,
+                            date: system.date,
+                            rojin_name
+                        });
+                    });
+                });
+            }).catch((err)=>{
+                this.sendError(ws, err);
+            });
+        }
+    }
+    private publish(obj:any):void{
+        //すべてのユーザーに送っちゃうぞーーーーーーーーーーーー
+        for(let i=0, wss=this.wss, l=wss.length; i<l; i++){
+            this.send(wss[i], obj);
         }
     }
     private makeNewSession():Promise<string>{
