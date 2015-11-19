@@ -12,6 +12,7 @@ export interface PageProps{
     user?:UserDoc;
     call?:CallDoc;
     //rojinpage
+    date?: number;
     rojin_name?:string;
     calls?:Array<CallDocWithUser>;
 }

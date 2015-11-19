@@ -99,6 +99,7 @@ export default class Ws{
                 break;
             case "rojinpage":
                 pageActions.rojinPage({
+                    date: obj.date,
                     rojin_name: obj.rojin_name,
                     calls: obj.calls
                 });
@@ -147,6 +148,6 @@ export default class Ws{
     //送信メッセージがackを必要とするか
     private requiresAck(obj:any):boolean{
         let command:string=obj.command;
-        return command==="session" || command==="call";
+        return command==="session" || command==="call" || command==="rojin-console";
     }
 }

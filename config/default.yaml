@@ -20,3 +20,4 @@ session:
 system:
   # default
   roujin_pass: test
+  admin_pass: test

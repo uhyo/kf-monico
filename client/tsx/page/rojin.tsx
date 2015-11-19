@@ -1,18 +1,24 @@
 ///<reference path="../../../typings/bundle.d.ts" />
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import {Page} from './index';
 
 import {CallDocWithUser} from '../../../lib/db';
 
 import RojinPass from '../widgets/rojin-pass';
 
+import * as errorActions from '../../action/error';
+
 //老人メインインターフェース
 export default class Rojin extends Page{
     constructor(props){
         super(props);
     }
+    componentDidUpdate(){
+        (ReactDOM.findDOMNode(this.refs["console-date"]) as HTMLInputElement).value = String(this.props.date);
+    }
     render(){
-        const {rojin_name, calls} = this.props;
+        const {date, rojin_name, calls} = this.props;
 
         //寝ているひとと起きているひとに分割
         const sleepings:Array<CallDocWithUser>=[], preparings:Array<CallDocWithUser>=[];
@@ -59,6 +65,24 @@ export default class Rojin extends Page{
                     }</div>
                 </section>
             </div>
+            <form onSubmit={this.handleConsoleSubmit()}>
+                <section className="rojin-console">
+                    <h1>管理コンソール</h1>
+                    <p>管理者パスワード：
+                        <input ref="console-pass" type="password" />
+                    </p>
+                    <section>
+                        <h1>老人パスワードの変更</h1>
+                        <p><input ref="console-new-password1" type="password" placeholder="新しい老人パスワード" /></p>
+                        <p><input ref="console-new-password2" type="password" placeholder="再入力" /></p>
+                    </section>
+                    <section>
+                        <h1>日付の変更</h1>
+                        <p><input ref="console-date" type="number" defaultValue={String(date)}/></p>
+                    </section>
+                    <p><input type="submit" value="送信"/></p>
+                </section>
+            </form>
         </section>;
     }
     private callList(list:Array<CallDocWithUser>,awake:boolean){
@@ -125,6 +149,25 @@ export default class Rojin extends Page{
                 command: "rojin-confirm",
                 eccs
             });
+        };
+    }
+    private handleConsoleSubmit(){
+        return (e)=>{
+            e.preventDefault();
+            let adminpass   = (ReactDOM.findDOMNode(this.refs["console-pass"]) as HTMLInputElement).value,
+                password1 = (ReactDOM.findDOMNode(this.refs["console-new-password1"]) as HTMLInputElement).value,
+                password2 = (ReactDOM.findDOMNode(this.refs["console-new-password2"]) as HTMLInputElement).value,
+                date      = Number((ReactDOM.findDOMNode(this.refs["console-date"]) as HTMLInputElement).value) || 0;
+            if(password1 !== password2){
+                errorActions.error(new Error("パスワードが一致しません。"));
+            }
+            this.props.ws.send({
+                command: "rojin-console",
+                adminpass,
+                password: password1,
+                date
+            });
+
         };
     }
 }

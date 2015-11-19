@@ -26,6 +26,7 @@ export var callokPage = Reflux.createAction<{}>();
 export var rojinTop = Reflux.createAction<{}>();
 
 export var rojinPage = Reflux.createAction<{
+    date: number;
     rojin_name: string;
     calls: Array<CallDocWithUser>;
 }>();

@@ -462,6 +462,44 @@ export default class Session{
             }).catch((err)=>{
                 this.sendError(ws, err);
             });
+        }else if(command==="rojin-console"){
+            //老人管理コンソール
+            if(obj.password!=null && "string"!==typeof obj.password || "string" !== typeof obj.adminpass || obj.date!=null && "number"!==typeof obj.date){
+                this.sendError(ws, new Error("は？"));
+                return;
+            }
+            if(config.get<string>("system.admin_pass") !== obj.adminpass){
+                this.sendError(ws, new Error("管理パスワードが違います。"));
+                return;
+            }
+            //設定
+            let coll_s = this.db.collection(this.collection.system);
+            let update_obj:any = {
+            }, flag = false;
+            if(obj.password != null){
+                flag=true;
+                update_obj.roujin_pass = sha256sum(obj.password);
+            }
+            if(obj.date != null){
+                flag=true;
+                update_obj.date = obj.date;
+            }
+            let p = flag===false ? Promise.resolve({}) :
+                coll_s.updateOne({
+                    key: "system"
+                },{
+                    $set: update_obj
+                });
+            p.then(()=>{
+                this.systemCache = null;
+                this.send(ws, {
+                    command: "ok",
+                    ack: obj.comid
+                });
+                this.refreshAllRojin();
+            }).catch((err)=>{
+                this.sendError(ws, err);
+            });
         }
     }
     private publish(obj:any):void{
@@ -554,6 +592,7 @@ export default class Session{
                     const {ws, rojin_name} = rojins[i];
                     this.send(ws, {
                         command: "rojinpage",
+                        date,
                         rojin_name,
                         calls
                     });

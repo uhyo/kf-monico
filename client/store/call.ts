@@ -10,6 +10,7 @@ import * as callActions from '../action/call';
 import {UserDoc, CallDoc, CallDocWithUser} from '../../lib/db';
 
 export interface CallStoreData{
+    date: number;
     calls:Array<CallDocWithUser>;
 }
 
@@ -28,8 +29,8 @@ let callStore = Reflux.createStore({
         this.state=objectAssign({}, this.state, {calls});
         this.trigger(this.state);
     },
-    onRojinPage({calls}):void{
-        this.state=objectAssign({}, this.state, {calls});
+    onRojinPage({date, calls}):void{
+        this.state=objectAssign({}, this.state, {date, calls});
         this.trigger(this.state);
     },
 
