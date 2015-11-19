@@ -286,7 +286,7 @@ export default class Session{
                 this.sendError(ws, err);
             });
         }else if(command==="call"){
-            if("number"!==typeof obj.hour || "number"!==typeof obj.minute){
+            if("number"!==typeof obj.hour || "number"!==typeof obj.minute || "string"!==typeof obj.comment){
                 this.sendError(ws, new Error("は？"));
                 return;
             }
@@ -307,6 +307,7 @@ export default class Session{
                         $set:{
                             hour: obj.hour,
                             minute: obj.minute,
+                            comment: obj.comment,
                             next_hour: obj.hour,
                             next_minute: obj.minute,
                             snooze: 0,
@@ -576,7 +577,7 @@ export default class Session{
             let coll_s = this.db.collection(this.collection.system);
             let update_obj:any = {
             }, flag = false;
-            if(obj.password != null){
+            if(obj.password){
                 flag=true;
                 update_obj.roujin_pass = sha256sum(obj.password);
             }

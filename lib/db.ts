@@ -20,6 +20,8 @@ export interface UserDoc{
 export interface CallEntry{
     hour:number;
     minute:number;
+    //備考ーーーーーーーーーー
+    comment:string;
 }
 
 export interface CallDoc extends CallEntry{

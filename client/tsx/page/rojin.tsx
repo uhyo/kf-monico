@@ -38,6 +38,9 @@ export default class Rojin extends Page{
                                 <p><b className="rojin-main-name">{mine.user.name}</b><span className="rojin-main-phonetic">（{mine.user.name_phonetic}）</span></p>
                                 <p className="rojin-main-tel">{"\u260e"+mine.user.tel}</p>
                                 <p className="rojin-main-time">モーニングコール時刻：<b>{this.time(mine.next_hour, mine.next_minute)}</b></p>
+                                <p className="rojin-main-comment">{
+                                    mine.comment
+                                }</p>
                                 <p className="rojin-main-snooze">（スヌーズ：{mine.snooze}回）</p>
                                 <div className="rojin-main-buttons">
                                     <p><input type="button" value="起きた" onClick={this.wakeHandler(mine.eccs)}/></p>
@@ -111,6 +114,9 @@ export default class Rojin extends Page{
                 <div className="rojin-call-obj-name">{call.user.name}</div>
                 <div className="rojin-call-obj-info">
                     <p>モーニングコール時刻：<b className="rojin-call-obj-time">{this.time(call.next_hour, call.next_minute)}</b>　<small>（スヌーズ：{call.snooze}回）</small></p>
+                    <p className="rojin-call-obj-comment">{
+                        call.comment
+                    }</p>
                     <p>担当老人：{call.occupied ? call.occupied_by : "なし"}</p>
                 </div>
                 {call_btn}

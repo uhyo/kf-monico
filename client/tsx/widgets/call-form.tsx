@@ -13,7 +13,8 @@ export default class CallForm extends React.Component<{
     render(){
         let call:CallEntry=this.props.call || {
             hour: null,
-            minute: null
+            minute: null,
+            comment: null
         };
         let mn = this.props.user && this.props.user.record ? <p>
             前回のモーニングコールから本部到着までの所要時間は<strong>{this.props.user.record}分</strong>です。
@@ -26,6 +27,9 @@ export default class CallForm extends React.Component<{
                 時
                 <select ref="minute" defaultValue={call.minute && String(call.minute)}>{this.makeNumopts(0,59)}</select>
                 分
+            </p>
+            <p className="main-call-form-comment">
+                <textarea ref="comment" placeholder="備考" defaultValue={call.comment}/>
             </p>
             <p>
                 <input type="submit" value="登録"/>
@@ -45,6 +49,7 @@ export default class CallForm extends React.Component<{
             let call:CallEntry = {
                 hour: Number((ReactDOM.findDOMNode(this.refs["hour"]) as HTMLSelectElement).value),
                 minute: Number((ReactDOM.findDOMNode(this.refs["minute"]) as HTMLSelectElement).value),
+                comment: (ReactDOM.findDOMNode(this.refs["comment"]) as HTMLSelectElement).value,
             };
             if(this.props.onSubmit){
                 this.props.onSubmit(call);
