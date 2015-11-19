@@ -30,3 +30,9 @@ export var confirm = Reflux.createAction<{
     date: number;
     eccs: string;
 }>();
+export var snooze = Reflux.createAction<{
+    date: number;
+    eccs: string;
+    next_hour: number;
+    next_minute: number;
+}>();

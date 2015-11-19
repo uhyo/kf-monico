@@ -130,6 +130,14 @@ export default class Ws{
                     eccs: obj.eccs
                 });
                 break;
+            case "rojin-snooze":
+                callActions.snooze({
+                    date: obj.date,
+                    eccs: obj.eccs,
+                    next_hour: obj.next_hour,
+                    next_minute: obj.next_minute
+                });
+                break;
 
         }
         let ack:number=obj.ack;

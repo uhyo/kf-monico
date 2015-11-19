@@ -43,6 +43,10 @@ export default class Rojin extends Page{
                                     <p><input type="button" value="起きた" onClick={this.wakeHandler(mine.eccs)}/></p>
                                     <p><input type="button" value="やめる" onClick={this.callCancelHandler()}/></p>
                                 </div>
+                                <div className="rojin-snooze-buttons">
+                                    <p><input type="number" ref="rojin-snooze" min="5" step="5" defaultValue="5" />分後</p>
+                                    <p><input type="button" value="スヌーズ" onClick={this.snoozeHandler(mine.eccs)}/></p>
+                                </div>
                             </section>;
         return <section className="page-rojin">
             <h1>老人ホーム</h1>
@@ -151,6 +155,16 @@ export default class Rojin extends Page{
             this.props.ws.send({
                 command: "rojin-confirm",
                 eccs
+            });
+        };
+    }
+    private snoozeHandler(eccs:string){
+        //スヌーズボタン
+        return (e)=>{
+            this.props.ws.send({
+                command: "rojin-snooze",
+                eccs,
+                snooze: Number((ReactDOM.findDOMNode(this.refs["rojin-snooze"]) as HTMLInputElement).value)
             });
         };
     }

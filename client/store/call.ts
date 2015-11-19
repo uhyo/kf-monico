@@ -86,6 +86,23 @@ let callStore = Reflux.createStore({
         });
         this.trigger(this.state);
     },
+    onSnooze({date, eccs, next_hour, next_minute}):void{
+        this.state = objectAssign({}, this.state, {
+            calls: this.state.calls.map(call =>
+                           call.date===date && call.eccs===eccs ?
+                           objectAssign({},call,{
+                               occupied: false,
+                               occupied_by: "",
+                               next_hour,
+                               next_minute,
+                               snooze: call.snooze+1
+                           }) :
+                           call).sort((call1,call2)=>{
+                               return call1.next_hour - call2.next_hour || call1.next_minute - call2.next_minute;
+                           })
+        });
+        this.trigger(this.state);
+    },
 });
 
 export default callStore;

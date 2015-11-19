@@ -462,6 +462,62 @@ export default class Session{
             }).catch((err)=>{
                 this.sendError(ws, err);
             });
+        }else if(command==="rojin-snooze"){
+            //もっと寝たい
+            if("number"!==typeof obj.snooze){
+                this.sendError(ws, new Error("は？"));
+                return;
+            }
+            let collc = this.db.collection(this.collection.call);
+            this.getSystemInfo().then((system:SystemInfo)=>{
+                return this.getUserData(sessid).then(({eccs, rojin, rojin_name})=>{
+                    if(rojin===false){
+                        throw new Error("Session Expired");
+                    }
+                    return collc.find({
+                        date: system.date,
+                        eccs: obj.eccs,
+                    }).limit(1).next().then((call: CallDoc)=>{
+                        if(call==null){
+                            throw new Error("は？");
+                        }
+                        //n分進める
+                        let {next_hour, next_minute} = call;
+                        next_minute += obj.snooze;
+                        while(next_minute >= 60){
+                            next_hour++;
+                            next_minute -= 60;
+                        }
+                        return {date:system.date, eccs: obj.eccs, next_hour, next_minute};
+                    });
+                });
+            }).then(({date, eccs, next_hour, next_minute})=>{
+                //アップデート
+                return collc.updateOne({
+                    date,
+                    eccs
+                },{
+                    $set: {
+                        occupied: false,
+                        occupied_by: "",
+                        next_hour,
+                        next_minute
+                    },
+                    $inc: {
+                        snooze: 1
+                    }
+                }).then(()=>{
+                    this.publish({
+                        command: "rojin-snooze",
+                        date,
+                        eccs,
+                        next_hour,
+                        next_minute
+                    });
+                });
+            }).catch((err)=>{
+                this.sendError(ws, err);
+            });
         }else if(command==="rojin-console"){
             //老人管理コンソール
             if(obj.password!=null && "string"!==typeof obj.password || "string" !== typeof obj.adminpass || obj.date!=null && "number"!==typeof obj.date){

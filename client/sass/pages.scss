@@ -141,19 +141,24 @@
       font-size: 1.2em;
     }
 
-    .rojin-main-buttons {
+    .rojin-main-buttons, .rojin-snooze-buttons {
+      font-size: 1.4em;
       display: flex;
       justify-content: space-around;
       
       p {
         flex: 40% 0 0;
       }
-      input {
+      input[type="button"] {
         width: 100%;
 
         background: linear-gradient(to top, #0fb4e7 0%, #ffffff 100%);
       }
-      
+      input[type="number"] {
+        width: 80%;
+        background: none;
+        background-color: white;
+      }
     }
   }
 }
