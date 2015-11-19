@@ -20,7 +20,7 @@ export default class Main extends Page{
                 <p><a href="/entry">プロフィール修正</a></p>
                 <h1>モーニングコール登録</h1>
             </header>
-            <CallForm onSubmit={this.handleSubmit()} call={this.props.call}/>
+            <CallForm onSubmit={this.handleSubmit()} user={this.props.user} call={this.props.call}/>
         </section>;
     }
     private handleSubmit():(call:CallEntry)=>void{

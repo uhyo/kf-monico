@@ -261,7 +261,8 @@ export default class Session{
                     eccs
                 },{
                     $setOnInsert:{
-                        eccs
+                        eccs,
+                        record: 0
                     },
                     $set:{
                         name: obj.name,
@@ -468,7 +469,7 @@ export default class Session{
                         throw new Error("Session Expired");
                     }
                     let collc = this.db.collection(this.collection.call);
-                    return collc.updateMany({
+                    return collc.findOneAndUpdate({
                         date: system.date,
                         eccs: obj.eccs,
                     },{
@@ -478,6 +479,22 @@ export default class Session{
                             occupied: false,
                             occupied_by: ""
                         }
+                    }).then(({value}:{value:CallDoc})=>{
+                        //現在時刻とモニコ時刻の差をとる
+                        const now = new Date();
+                        const now_hour = now.getHours(), now_minute = now.getMinutes();
+                        let diff = (now_hour - value.hour) * 60 + (now_minute - value.minute);
+                        if(diff<0){
+                            diff = 0;
+                        }
+                        let coll_u = this.db.collection(this.collection.user);
+                        return coll_u.updateOne({
+                            eccs: obj.eccs,
+                        },{
+                            $set: {
+                                record: diff
+                            }
+                        });
                     }).then(()=>{
                         this.publish({
                             command: "rojin-confirm",

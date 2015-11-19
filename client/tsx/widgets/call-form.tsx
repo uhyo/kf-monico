@@ -2,21 +2,25 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import {CallDoc, CallEntry} from '../../../lib/db';
+import {UserDoc, CallDoc, CallEntry} from '../../../lib/db';
 
 //ユーザー情報
 export default class CallForm extends React.Component<{
+    user?: UserDoc;
     call?: CallEntry;
     onSubmit:(call:CallEntry)=>void;
 },{}>{
     render(){
-        console.log(this.props);
         let call:CallEntry=this.props.call || {
             hour: null,
             minute: null
         };
+        let mn = this.props.user && this.props.user.record ? <p>
+            前回のモーニングコールから本部到着までの所要時間は<strong>{this.props.user.record}分</strong>です。
+        </p> : null;
         return <form onSubmit={this.handleSubmit()}>
             <p>モーニングコールの時刻を入力してください。</p>
+            {mn}
             <p className="main-call-form-time">
                 <select ref="hour" defaultValue={call.hour && String(call.hour)}>{this.makeNumopts(0,23)}</select>
                 時

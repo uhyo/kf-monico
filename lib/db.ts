@@ -12,6 +12,8 @@ export interface UserDoc{
     name:string;
     name_phonetic:string;
     tel:string;
+    //本部到着までの時間の記録（分）
+    record:number;
 }
 
 //委員が入力する情報

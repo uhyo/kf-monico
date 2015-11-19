@@ -36,10 +36,11 @@ export default class UserForm extends React.Component<{
         return (e)=>{
             e.preventDefault();
             let user:UserDoc = {
-            eccs: (this.props.user ? this.props.user.eccs : null),
+                eccs: (this.props.user ? this.props.user.eccs : null),
                 name: (ReactDOM.findDOMNode(this.refs["name"]) as HTMLInputElement).value,
                 name_phonetic: (ReactDOM.findDOMNode(this.refs["name_phonetic"]) as HTMLInputElement).value,
                 tel: (ReactDOM.findDOMNode(this.refs["tel"]) as HTMLInputElement).value,
+                record: 0
             };
             if(this.props.onSubmit){
                 this.props.onSubmit(user);

@@ -17,7 +17,8 @@ export default class Entry extends Page{
             eccs: this.props.eccs,
             name: null,
             name_phonetic: null,
-            tel: null
+            tel: null,
+            record: 0
         };
         return <section className="page-entry">
             <header>
