@@ -68,19 +68,22 @@ export default class Rojin extends Page{
             <form onSubmit={this.handleConsoleSubmit()}>
                 <section className="rojin-console">
                     <h1>管理コンソール</h1>
-                    <p>管理者パスワード：
-                        <input ref="console-pass" type="password" />
-                    </p>
-                    <section>
-                        <h1>老人パスワードの変更</h1>
-                        <p><input ref="console-new-password1" type="password" placeholder="新しい老人パスワード" /></p>
-                        <p><input ref="console-new-password2" type="password" placeholder="再入力" /></p>
-                    </section>
-                    <section>
-                        <h1>日付の変更</h1>
-                        <p><input ref="console-date" type="number" defaultValue={String(date)}/></p>
-                    </section>
-                    <p><input type="submit" value="送信"/></p>
+                    <details>
+                        <summary>開く</summary>
+                        <p>管理者パスワード：
+                            <input ref="console-pass" type="password" />
+                        </p>
+                        <section>
+                            <h1>老人パスワードの変更</h1>
+                            <p><input ref="console-new-password1" type="password" placeholder="新しい老人パスワード" /></p>
+                            <p><input ref="console-new-password2" type="password" placeholder="再入力" /></p>
+                        </section>
+                        <section>
+                            <h1>日付の変更</h1>
+                            <p><input ref="console-date" type="number" defaultValue={String(date)}/></p>
+                        </section>
+                        <p><input type="submit" value="送信"/></p>
+                    </details>
                 </section>
             </form>
         </section>;
