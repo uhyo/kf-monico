@@ -27,11 +27,19 @@ interface CollectionNames{
 export default class Session{
     private wss:Array<WebSocket>;
     private sessionid:WeakMap<WebSocket,string>;
+    private heartbeat:WeakMap<WebSocket, {
+        handler:(ws:WebSocket)=>void;
+        id:any;
+    }>;
     private collection:CollectionNames;
     private systemCache:SystemInfo;
     constructor(private db:Db){
         this.wss=[];
         this.sessionid = new WeakMap<WebSocket, string>();
+        this.heartbeat = new WeakMap<WebSocket, {
+            handler:(ws:WebSocket)=>void;
+            id:any;
+        }>();
         this.collection = config.get<CollectionNames>("mongodb.collections");
         this.systemCache = null;
     }
@@ -41,6 +49,21 @@ export default class Session{
     //wsファミリに追加された
     add(ws:WebSocket):void{
         this.wss.push(ws);
+        //ハートビートを追加
+        let handler = (ws:WebSocket)=>{
+            this.send(ws, {
+                command: "heartbeat"
+            });
+            let {handler} = this.heartbeat.get(ws);
+            this.heartbeat.set(ws, {
+                handler,
+                id: setTimeout(handler, 30000, ws)
+            });
+        };
+        this.heartbeat.set(ws, {
+            handler,
+            id: setTimeout(handler, 30000, ws)
+        });
         ws.on("message",(data:string,flags)=>{
             /* JSONで表されるものを受け取る */
             try{
@@ -58,6 +81,10 @@ export default class Session{
             //wsがcloseされた
             ws.removeAllListeners();
             this.remove(ws);
+            let obj=this.heartbeat.get(ws);
+            if(obj && obj.id){
+                clearTimeout(obj.id);
+            }
         });
     }
     //もういない
