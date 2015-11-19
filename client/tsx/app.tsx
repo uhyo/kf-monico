@@ -19,7 +19,7 @@ export default class App extends React.Component<{
     ws: Ws
 },{
     page: PageStoreData,
-    call: CallStoreData
+    call: CallStoreData,
 }>{
     private page_unsubscribe: ()=>void;
     private call_unsubscribe: ()=>void;
@@ -27,7 +27,7 @@ export default class App extends React.Component<{
         super();
         this.state = {
             page: pageStore.getInitialState(),
-            call: callStore.getInitialState()
+            call: callStore.getInitialState(),
         };
     }
     componentDidMount(){
@@ -66,11 +66,33 @@ export default class App extends React.Component<{
                 main = <Rojin ws={ws} rojin_name={page.rojin_name} date={call.date} calls={call.calls}/>;
                 break;
         }
+        //ローディング画面
+        let loading = null;
+        if(page.loading_content===true){
+            let basepath = document.body.getAttribute("data-basepath");
+            let cls = "app-loading";
+            if(page.loading===false){
+                cls += " app-loading-hidden";
+            }
+            loading = <div className={cls}>
+                <div className="app-loading-info">
+                    <p>Loading...</p>
+                </div>
+                <div className="app-loading-image">
+                    <div className="app-loading-image-wrapper">
+                        <object data={basepath+"static/komakkero-loading.svg"} type="image/svg+xml" />
+                    </div>
+                </div>
+            </div>;
+        }else{
+            loading = <div className="app-loading app-loading-hidden"/>;
+        }
         return <article className="app">
             <h1 className="app-header">KF66 Morning Call System</h1>
             <div className="app-main">
                 {main}
             </div>
+            {loading}
         </article>;
     }
 }

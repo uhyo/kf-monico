@@ -9,6 +9,8 @@ import * as pageActions from '../action/page';
 import {UserDoc, CallDoc, CallDocWithUser} from '../../lib/db';
 
 export interface PageStoreData{
+    loading: boolean;
+    loading_content: boolean;
     page: string;
     eccs?:string;
     user?:UserDoc;
@@ -22,6 +24,8 @@ let pageStore = Reflux.createStore({
     },
     init():void{
         this.state = {
+            loading: false,
+            loading_contnet: false,
             page: "top"
         };
         this.listenToMany(pageActions);
@@ -37,6 +41,23 @@ let pageStore = Reflux.createStore({
         //stateにアレを追加
         let basepath = document.body.getAttribute("data-basepath");
         history.pushState(this.state, "", this.state.page==="top" ? basepath : basepath+this.state.page);
+    },
+    onLoading({loading}):void{
+        let prev_loading = this.state.loading;
+        this.state = objectAssign({},this.state,{
+            loading,
+            loading_content: this.state.loading || loading,
+        });
+        this.trigger(this.state);
+        if(prev_loading===true && loading===false){
+            //コンテンツ表示を遅らせる（収納のため）
+            setTimeout(()=>{
+                this.state = objectAssign({}, this.state, {
+                    loading_content: false
+                });
+                this.trigger(this.state);
+            }, 500);
+        }
     },
     onTopPage():void{
         this.state = objectAssign({},this.state,{

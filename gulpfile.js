@@ -12,6 +12,7 @@ var ts=require('typescript');
 var del=require('del');
 var sass=require('gulp-sass');
 var duration=require('gulp-duration');
+var changed=require('gulp-changed');
 var rename=require('gulp-rename');
 var runSequence=require('run-sequence');
 
@@ -54,6 +55,14 @@ gulp.task('sass',()=>{
     .pipe(sass().on("error",sass.logError))
     .pipe(rename("css.css"))
     .pipe(gulp.dest("dist"));
+});
+
+gulp.task('static',function(){
+    return gulp.src(["client/static/**/*"],{
+        base:"client/static"
+    })
+    .pipe(changed("dist/"))
+    .pipe(gulp.dest("dist/"));
 });
 
 gulp.task('clean',()=>{

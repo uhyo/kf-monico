@@ -6,6 +6,11 @@ import {UserDoc, CallDoc, CallDocWithUser} from '../../lib/db';
 
 import * as errorActions from './error';
 
+//ロード
+export var loading = Reflux.createAction<{
+    loading: boolean;
+}>();
+
 //ページ遷移
 export var topPage = Reflux.createAction<{}>();
 

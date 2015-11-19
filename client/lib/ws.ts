@@ -41,10 +41,26 @@ export default class Ws{
     }
     //WebSocketコネクションが開通したのでセッションを初期化する
     private initSession():void{
+        pageActions.loading({
+            loading: true
+        });
         this.send({
             command: "session",
             sessionid: localStorage.getItem("monico_sessionid") || null
         }).then((response)=>{
+            if(localStorage.getItem("monico_load_flg")!=="true"){
+                //初回ロードだけはわざと長くする
+                setTimeout(()=>{
+                    localStorage.setItem("monico_load_flg","true");
+                    pageActions.loading({
+                        loading: false
+                    });
+                },7000);
+            }else{
+                pageActions.loading({
+                    loading: false
+                });
+            }
             if("string"===typeof response.sessionid){
                 localStorage.setItem("monico_sessionid", response.sessionid);
                 console.log("session:",response.sessionid);
