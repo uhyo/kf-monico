@@ -18,6 +18,9 @@ export interface PageProps{
     calls?:Array<CallDocWithUser>;
 }
 export interface PageState{
+    //rojinpage
+    sleeping_sort_mode: string;
+    preparing_sort_mode: string;
 }
 export class Page extends React.Component<PageProps, PageState>{
 }

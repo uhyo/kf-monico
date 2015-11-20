@@ -1,7 +1,9 @@
 ///<reference path="../../../typings/bundle.d.ts" />
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import * as objectAssign from 'object-assign';
 import {Page} from './index';
+
 
 import {CallDocWithUser} from '../../../lib/db';
 
@@ -13,6 +15,10 @@ import * as errorActions from '../../action/error';
 export default class Rojin extends Page{
     constructor(props){
         super(props);
+        this.state = {
+            sleeping_sort_mode: "time",
+            preparing_sort_mode: "time",
+        };
     }
     componentDidUpdate(){
         (ReactDOM.findDOMNode(this.refs["console-date"]) as HTMLInputElement).value = String(this.props.date);
@@ -28,6 +34,24 @@ export default class Rojin extends Page{
             }else if(calls[i].confirmed===false){
                 preparings.push(calls[i]);
             }
+        }
+        if(this.state.sleeping_sort_mode==="phonetic"){
+            sleepings.sort((a,b)=>{
+                return a.user.name_phonetic < b.user.name_phonetic ? -1 : 1;
+            });
+        }else{
+            sleepings.sort((a,b)=>{
+                return (a.next_hour-b.next_hour)*60 + (a.next_minute-b.next_minute);
+            });
+        }
+        if(this.state.preparing_sort_mode==="phonetic"){
+            preparings.sort((a,b)=>{
+                return a.user.name_phonetic < b.user.name_phonetic ? -1 : 1;
+            });
+        }else{
+            preparings.sort((a,b)=>{
+                return (a.next_hour-b.next_hour)*60 + (a.next_minute-b.next_minute);
+            });
         }
         // 自分が担当しているやつを探す
         const mine = sleepings.filter(call => call.occupied_by === rojin_name)[0];
@@ -59,14 +83,20 @@ export default class Rojin extends Page{
                 <section className="rojin-sleepings">
                     <h1>寝ている人</h1>
                     {call_main}
-                    <p>寝ている人は<b>{sleepings.length}人</b>います。</p>
+                    <p>寝ている人は<b>{sleepings.length}人</b>います。　
+                        <span className="clickable-like" onClick={this.handleSortMode("sleeping_sort_mode","time")}>時間でソート</span>｜
+                        <span className="clickable-like" href="#" onClick={this.handleSortMode("sleeping_sort_mode","phonetic")}>名前でソート</span>
+                        </p>
                     <div className="rojin-sleepings-box">{
                         this.callList(sleepings,false)
                     }</div>
                 </section>
                 <section className="rojin-preparings">
                     <h1>起きている人</h1>
-                    <p>本部に到着していない人は<b>{preparings.length}人</b>います。</p>
+                    <p>本部に到着していない人は<b>{preparings.length}人</b>います。
+                        <span className="clickable-like" onClick={this.handleSortMode("preparing_sort_mode","time")}>時間でソート</span>｜
+                        <span className="clickable-like" href="#" onClick={this.handleSortMode("preparing_sort_mode","phonetic")}>名前でソート</span>
+                        </p>
                     <div className="rojin-preparings-box">{
                         this.callList(preparings,true)
                     }</div>
@@ -191,6 +221,14 @@ export default class Rojin extends Page{
                 date
             });
 
+        };
+    }
+    private handleSortMode(key:string, mode:string){
+        return (e)=>{
+            e.preventDefault();
+            this.setState(objectAssign({},this.state,{
+                [key]: mode
+            }));
         };
     }
 }

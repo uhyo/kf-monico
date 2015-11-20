@@ -13,6 +13,11 @@ a:link, a:visited {
   font-size: 1.5em;
 }
 
+span.clickable-like {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 //util
 input[type="text"], input[type="password"], input[type="tel"], input[type="number"], select {
   box-sizing: border-box;
