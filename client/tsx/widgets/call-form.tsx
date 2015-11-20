@@ -23,9 +23,9 @@ export default class CallForm extends React.Component<{
             <p>モーニングコールの時刻を入力してください。</p>
             {mn}
             <p className="main-call-form-time">
-                <select ref="hour" defaultValue={call.hour && String(call.hour)}>{this.makeNumopts(0,23)}</select>
+                <select ref="hour" defaultValue={call.hour && String(call.hour)}>{this.makeNumopts(0,23,1)}</select>
                 時
-                <select ref="minute" defaultValue={call.minute && String(call.minute)}>{this.makeNumopts(0,59)}</select>
+                <select ref="minute" defaultValue={call.minute && String(call.minute)}>{this.makeNumopts(0,59,5)}</select>
                 分
             </p>
             <p className="main-call-form-comment">
@@ -36,9 +36,9 @@ export default class CallForm extends React.Component<{
             </p>
         </form>;
     }
-    private makeNumopts(min:number,max:number){
+    private makeNumopts(min:number,max:number,step:number){
         let result=[];
-        for(let i=min;i<=max;i++){
+        for(let i=min;i<=max;i+=step){
             result.push(<option key={i} value={String(i)}>{i}</option>);
         }
         return result;
