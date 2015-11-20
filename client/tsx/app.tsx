@@ -74,13 +74,16 @@ export default class App extends React.Component<{
             if(page.loading===false){
                 cls += " app-loading-hidden";
             }
+            let obj = page.loading_type===0 ?
+                basepath+"static/komakkero-loading.svg" :
+                basepath+"static/komakkero-loading2.svg";
             loading = <div className={cls}>
                 <div className="app-loading-info">
                     <p>Loading...</p>
                 </div>
                 <div className="app-loading-image">
                     <div className="app-loading-image-wrapper">
-                        <object data={basepath+"static/komakkero-loading.svg"} type="image/svg+xml" />
+                        <object data={obj} type="image/svg+xml" />
                     </div>
                 </div>
             </div>;

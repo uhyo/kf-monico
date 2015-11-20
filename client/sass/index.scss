@@ -64,7 +64,7 @@ h1.app-header {
   background-color: rgba(#000000, 0.4);
   color: white;
 
-  transition: top cubic-bezier(0, 0, 0.4, 1) 0.4s;
+  transition: top cubic-bezier(0, 0, 0.4, 1) 0.2s;
 
   &.app-loading-hidden {
     top: -100vh;

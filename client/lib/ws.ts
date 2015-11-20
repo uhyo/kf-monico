@@ -20,6 +20,10 @@ export default class Ws{
     init():void{
         let basepath = document.body.getAttribute("data-basepath");
         let ws = this.ws = new WebSocket(location.origin.replace(/^http/,"ws")+basepath);
+        //ローディングにしておく
+        pageActions.loading({
+            loading: true
+        });
         ws.addEventListener("error",(e)=>{
             errorActions.error(new Error(e.message));
         });
@@ -41,14 +45,11 @@ export default class Ws{
     }
     //WebSocketコネクションが開通したのでセッションを初期化する
     private initSession():void{
-        pageActions.loading({
-            loading: true
-        });
         this.send({
             command: "session",
             sessionid: localStorage.getItem("monico_sessionid") || null
         }).then((response)=>{
-            if(localStorage.getItem("monico_load_flg")!=="true"){
+            if(/*localStorage.getItem("monico_load_flg")!==*/"true"){
                 //初回ロードだけはわざと長くする
                 setTimeout(()=>{
                     localStorage.setItem("monico_load_flg","true");

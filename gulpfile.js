@@ -80,7 +80,7 @@ gulp.task('watch',['tsx-tsc','watch-jsx','tsc','sass'],()=>{
     gulp.watch('client/sass/**/*.scss',['sass']);
 });
 
-gulp.task('default',['tsx','tsc','sass']);
+gulp.task('default',['tsx','tsc','sass','static']);
 
 function browserifier(watch){
     let opts={

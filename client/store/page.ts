@@ -11,6 +11,7 @@ import {UserDoc, CallDoc, CallDocWithUser} from '../../lib/db';
 export interface PageStoreData{
     loading: boolean;
     loading_content: boolean;
+    loading_type: number;
     page: string;
     eccs?:string;
     user?:UserDoc;
@@ -46,6 +47,7 @@ let pageStore = Reflux.createStore({
         let prev_loading = this.state.loading;
         this.state = objectAssign({},this.state,{
             loading,
+            loading_type: loading ? Math.floor(Math.random()*2) : 0,
             loading_content: this.state.loading || loading,
         });
         this.trigger(this.state);
