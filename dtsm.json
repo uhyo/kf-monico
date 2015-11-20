@@ -45,6 +45,9 @@
     },
     "object-assign/object-assign.d.ts": {
       "ref": "aed176536a202b9a2475ce1989ea6d2d0226a185"
+    },
+    "socket.io/socket.io.d.ts": {
+      "ref": "16134c168d021351acb1673ee9659644fc58c424"
     }
   }
 }

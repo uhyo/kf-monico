@@ -6,8 +6,10 @@ import * as errorActions from '../action/error';
 import * as pageActions from '../action/page';
 import * as callActions from '../action/call';
 
+declare var io:any;
+
 export default class Ws{
-    private ws:WebSocket;
+    private ws:any;
     private comid:number;
     private ack_queue:Array<{
         comid:number;
@@ -19,7 +21,8 @@ export default class Ws{
     }
     init():void{
         let basepath = document.body.getAttribute("data-basepath");
-        let ws = this.ws = new WebSocket(location.origin.replace(/^http/,"ws")+basepath+"ws");
+        //let ws = this.ws = new WebSocket(location.origin.replace(/^http/,"ws")+basepath+"ws");
+        let ws = this.ws = io();
         //ローディングにしておく
         pageActions.loading({
             loading: true
@@ -27,21 +30,15 @@ export default class Ws{
         ws.addEventListener("error",(e)=>{
             errorActions.error(new Error(e.message));
         });
-        ws.addEventListener("open",(e)=>{
+        ws.on("connect",()=>{
             this.initSession();
         });
-        ws.addEventListener("close",(e)=>{
+        ws.addEventListener("disconnect",(e)=>{
             errorActions.error(new Error("サーバーとの接続に失敗しました。ページをリロードしてください。"));
         });
-        ws.addEventListener("message",(e)=>{
+        ws.on("message",(obj)=>{
             //メッセージがきた
-            try{
-                let obj = JSON.parse(e.data);
-                this.message(obj);
-            }catch(e){
-                alert(e.message);
-                //ws.close();
-            }
+            this.message(obj);
         });
     }
     //WebSocketコネクションが開通したのでセッションを初期化する
@@ -75,7 +72,7 @@ export default class Ws{
         let com = extend({},obj,{
             comid
         });
-        this.ws.send(JSON.stringify(com));
+        this.ws.emit("message",com);
         if(this.requiresAck(obj)){
             return new Promise((fulfilled, rejected)=>{
                 this.ack_queue.push({

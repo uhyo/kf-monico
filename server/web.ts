@@ -5,9 +5,10 @@ import Session from './session';
 
 import config=require('config');
 import * as express from 'express';
-import * as expressWs from 'express-ws';
+import * as http from 'http';
 import * as ejs from 'ejs';
 import * as WebSocket from 'ws';
+import * as socketIO from 'socket.io';
 import {Promise} from 'es6-promise';
 
 
@@ -16,6 +17,7 @@ export default class Web{
     private db:Db;
     private session:Session;
     private app:express.Express;
+    private io:any;
     constructor(){
     }
     init(db:Db):Promise<Web>{
@@ -24,7 +26,6 @@ export default class Web{
         //まずセッション管理を初期化してから
         return this.session.init().then(()=>{
             let app = this.app = express();
-            expressWs(app);
 
             app.use("/static", express.static("dist", {
                 dotfiles: "ignore",
@@ -36,7 +37,6 @@ export default class Web{
                 redirect: true,
             }));
             this.initRoute();
-            app.listen(config.get("webserver.port"));
 
             return this;
         });
@@ -44,14 +44,18 @@ export default class Web{
     private initRoute():void{
         let app=this.app, session=this.session;
         let basepath = config.get<string>("webserver.basepath");
-        (app as any).ws("/ws",(ws:WebSocket,req)=>{
-            //WebSocketが来たらsessionに任せる
-            session.add(ws);
-        });
-        app.get("*",(req,res)=>{
+        app.get("/*",(req,res)=>{
             res.render("index.ejs",{
                 basepath
             });
         });
+
+        let srv = http.createServer(app);
+        let io = socketIO(srv);
+        io.on("connection",(ws)=>{
+            session.add(ws);
+        });
+
+        srv.listen(config.get("webserver.port"));
     }
 }

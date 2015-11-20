@@ -13,7 +13,6 @@ import * as objectAssign from 'object-assign';
 import * as validator from './validator';
 import sha256sum from './sha256sum';
 
-import * as WebSocket from 'ws';
 import {Promise} from 'es6-promise';
 
 interface CollectionNames{
@@ -25,21 +24,13 @@ interface CollectionNames{
 
 
 export default class Session{
-    private wss:Array<WebSocket>;
-    private sessionid:WeakMap<WebSocket,string>;
-    private heartbeat:WeakMap<WebSocket, {
-        handler:(ws:WebSocket)=>void;
-        id:any;
-    }>;
+    private wss:Array<any>;
+    private sessionid:WeakMap<any,string>;
     private collection:CollectionNames;
     private systemCache:SystemInfo;
     constructor(private db:Db){
         this.wss=[];
-        this.sessionid = new WeakMap<WebSocket, string>();
-        this.heartbeat = new WeakMap<WebSocket, {
-            handler:(ws:WebSocket)=>void;
-            id:any;
-        }>();
+        this.sessionid = new WeakMap<any, string>();
         this.collection = config.get<CollectionNames>("mongodb.collections");
         this.systemCache = null;
     }
@@ -47,53 +38,29 @@ export default class Session{
         return Promise.resolve({});
     }
     //wsファミリに追加された
-    add(ws:WebSocket):void{
+    add(ws:any):void{
         this.wss.push(ws);
-        //ハートビートを追加
-        let handler = (ws:WebSocket)=>{
-            this.send(ws, {
-                command: "heartbeat"
-            });
-            let {handler} = this.heartbeat.get(ws);
-            this.heartbeat.set(ws, {
-                handler,
-                id: setTimeout(handler, 30000, ws)
-            });
-        };
-        this.heartbeat.set(ws, {
-            handler,
-            id: setTimeout(handler, 30000, ws)
-        });
-        ws.on("message",(data:string,flags)=>{
+        ws.on("message",(obj)=>{
             /* JSONで表されるものを受け取る */
-            try{
-                let obj = JSON.parse(data);
-                if(obj.comid != null && "number"!==typeof obj.comid){
-                    //comidに変な値を渡されても困る
-                    throw new Error("Invalid comid");
-                }
-                this.command(ws, obj);
-            }catch(e){
-                ws.close();
+            if(obj.comid != null && "number"!==typeof obj.comid){
+                //comidに変な値を渡されても困る
+                throw new Error("Invalid comid");
             }
+            this.command(ws, obj);
         });
-        ws.on("close",()=>{
+        ws.on("disconnect",()=>{
             //wsがcloseされた
             ws.removeAllListeners();
             this.remove(ws);
-            let obj=this.heartbeat.get(ws);
-            if(obj && obj.id){
-                clearTimeout(obj.id);
-            }
         });
     }
     //もういない
-    remove(ws:WebSocket):void{
+    remove(ws:any):void{
         this.wss = this.wss.filter(w => w!==ws);
     }
     //オブジェクトを送る
-    send(ws:WebSocket,obj:any):void{
-        ws.send(JSON.stringify(obj));
+    send(ws:any,obj:any):void{
+        ws.emit("message",obj);
     }
     sendError(ws:WebSocket,err:Error):void{
         this.send(ws,{

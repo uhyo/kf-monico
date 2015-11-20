@@ -13,3 +13,4 @@
 /// <reference path="random-string/random-string.d.ts" />
 /// <reference path="extend/extend.d.ts" />
 /// <reference path="object-assign/object-assign.d.ts" />
+/// <reference path="socket.io/socket.io.d.ts" />
