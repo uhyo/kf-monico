@@ -14,8 +14,7 @@ export default class Db{
     }
     init():Promise<{}>{
         let mb = config.get<any>("mongodb");
-        return (mongodb.MongoClient as any).connect(`mongodb://${mb.username}:${mb.password}@${mb.host}:${mb.port}/${mb.database}`)
-        .then((db)=>{
+        return this.connect(mb).then((db)=>{
             this.db=db;
             return db;
         })
@@ -27,6 +26,9 @@ export default class Db{
                 return {};
             });
         })
+    }
+    connect(mb:any):Promise<any>{
+        return (mongodb.MongoClient as any).connect(`mongodb://${mb.username}:${mb.password}@${mb.host}:${mb.port}/${mb.database}`)
     }
     collection(name:string):/*mongodb.Collection*/any{
         return this.db.collection(name);

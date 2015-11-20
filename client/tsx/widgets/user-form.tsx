@@ -6,6 +6,7 @@ import {UserDoc} from '../../../lib/db';
 
 //ユーザー情報
 export default class UserForm extends React.Component<{
+    system?:boolean;
     user?: UserDoc;
     onSubmit:(user:UserDoc)=>void;
 },{}>{
@@ -16,8 +17,12 @@ export default class UserForm extends React.Component<{
             name_phonetic:null,
             tel: null
         };
+        let sysinfo = this.props.system===true ?
+            <p>ウェブシステムから情報を自動で取得しました。</p> :
+            null;
         return <form onSubmit={this.handleSubmit()}>
             <p>ECCSユーザID: <b>{user.eccs}</b></p>
+            {sysinfo}
             <p>氏名：
                 <input ref="name" type="text" required placeholder="小松けろ" defaultValue={user.name}/>
             </p>

@@ -101,6 +101,7 @@ export default class Ws{
                 break;
             case "entrypage":
                 pageActions.entryPage({
+                    system: obj.system || false,
                     eccs: obj.eccs,
                     user: obj.user
                 });

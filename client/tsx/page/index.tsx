@@ -7,6 +7,7 @@ import {UserDoc, CallDoc, CallDocWithUser} from '../../../lib/db';
 export interface PageProps{
     ws: Ws;
     //entrypage
+    system?:boolean;
     eccs?:string;
     //mainpage
     user?:UserDoc;

@@ -658,9 +658,15 @@ export default class Session{
         }).then(([udoc, cdoc])=>{
             if(udoc==null){
                 //ないのでユーザー新規登録ページへ
-                this.send(ws, {
-                    command: "entrypage",
-                    eccs
+                //ウェブシステムからユーザー情報を探してあげる
+                return this.findUserFromWebSystem(eccs).then((udoc:UserDoc)=>{
+                    this.send(ws, {
+                        command: "entrypage",
+                        eccs,
+                        system: udoc!=null,
+                        user: udoc
+                    });
+                    return {};
                 });
             }else{
                 //あった
@@ -674,6 +680,25 @@ export default class Session{
         })
         .catch((err)=>{
             console.error(err);
+        });
+    }
+    private findUserFromWebSystem(eccs:string):Promise<UserDoc>{
+        return this.db.connect(config.get<any>("system-db")).then((db)=>{
+            return db.collection("user").find({
+                eccs_id: eccs
+            }).limit(1).next().then((doc)=>{
+                if(doc==null){
+                    return null;
+                }else{
+                    return {
+                        eccs,
+                        name: doc.name_last+doc.name_first,
+                        name_phonetic: doc.name_last_phonetic+doc.name_first_phonetic,
+                        tel: doc.cellphone,
+                        record: 0
+                    };
+                }
+            });
         });
     }
     private navigateRojin(rojins:Array<{

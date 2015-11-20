@@ -26,7 +26,7 @@ export default class Entry extends Page{
                 <p>ユーザー情報を入力してください。</p>
                 <p><a href={user.name==null ? "/" : "/home"}>戻る</a></p>
             </header>
-            <UserForm user={user} onSubmit={this.handleSubmit()}/>
+            <UserForm system={this.props.system} user={user} onSubmit={this.handleSubmit()}/>
         </section>;
     }
     private handleSubmit():(user:UserDoc)=>void{

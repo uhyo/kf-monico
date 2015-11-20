@@ -15,6 +15,7 @@ export var loading = Reflux.createAction<{
 export var topPage = Reflux.createAction<{}>();
 
 export var entryPage = Reflux.createAction<{
+    system?: boolean;
     eccs: string;
     user?: UserDoc;
 }>();

@@ -20,6 +20,7 @@ export interface PageStoreData{
     error_message: string;
 
     page: string;
+    system?:boolean;
     eccs?:string;
     user?:UserDoc;
     call?:CallDoc;
@@ -93,9 +94,10 @@ let pageStore = Reflux.createStore({
         this.history();
         this.trigger(this.state);
     },
-    onEntryPage({eccs,user}):void{
+    onEntryPage({system,eccs,user}):void{
         this.state = objectAssign({},this.state,{
             page:"entry",
+            system,
             eccs,
             user
         });
