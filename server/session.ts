@@ -681,7 +681,7 @@ export default class Session{
             }
         })
         .catch((err)=>{
-            console.error(err);
+            this.sendError(ws, err);
         });
     }
     private findUserFromWebSystem(eccs:string):Promise<UserDoc>{
