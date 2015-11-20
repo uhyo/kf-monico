@@ -31,7 +31,7 @@ export default class Ws{
             this.initSession();
         });
         ws.addEventListener("close",(e)=>{
-            console.log("clooosed");
+            errorActions.error(new Error("サーバーとの接続に失敗しました。ページをリロードしてください。"));
         });
         ws.addEventListener("message",(e)=>{
             //メッセージがきた

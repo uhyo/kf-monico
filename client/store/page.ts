@@ -5,13 +5,20 @@ import * as Reflux from 'reflux';
 import * as objectAssign from 'object-assign';
 
 import * as pageActions from '../action/page';
+import * as errorActions from '../action/error';
 
 import {UserDoc, CallDoc, CallDocWithUser} from '../../lib/db';
 
 export interface PageStoreData{
+    //ローディング画面
     loading: boolean;
     loading_content: boolean;
     loading_type: number;
+
+    //エラー画面
+    error: boolean;
+    error_message: string;
+
     page: string;
     eccs?:string;
     user?:UserDoc;
@@ -26,10 +33,13 @@ let pageStore = Reflux.createStore({
     init():void{
         this.state = {
             loading: false,
-            loading_contnet: false,
+            loading_content: false,
+            error: false,
+            error_message: "",
             page: "top"
         };
         this.listenToMany(pageActions);
+        this.listenToMany(errorActions);
 
         window.addEventListener("popstate",(e)=>{
             if(e.state){
@@ -42,6 +52,21 @@ let pageStore = Reflux.createStore({
         //stateにアレを追加
         let basepath = document.body.getAttribute("data-basepath");
         history.pushState(this.state, "", this.state.page==="top" ? basepath : basepath+this.state.page);
+    },
+    onError(err):void{
+        //エラーが発生したのでエラーを表示するぜ！！！！！！！！！！
+        this.state = objectAssign({},this.state,{
+            error: true,
+            error_message: err.message || err
+        });
+        this.trigger(this.state);
+    },
+    onClear():void{
+        //エラーをけす
+        this.state = objectAssign({},this.state,{
+            error: false,
+        });
+        this.trigger(this.state);
     },
     onLoading({loading}):void{
         let prev_loading = this.state.loading;

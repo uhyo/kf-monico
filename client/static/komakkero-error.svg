@@ -4,26 +4,6 @@
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="628.085px" height="645.23px" viewBox="0 0 628.085 645.23" enable-background="new 0 0 628.085 645.23"
 	 xml:space="preserve">
-<defs>
-<style type="text/css"><![CDATA[
-g.circle-anime circle {
-	animation-name: anm;
-	animation-iteration-count: infinite;
-	animation-direction: normal;
-	animation-duration: 1s;
-}
-
-@keyframes anm {
-	from {
-		opacity: 1;
-	}
-	to {
-		opacity: 0;
-	}
-}
-]]></style>
-</defs>
-
 <g id="はす">
 	<g>
 		<path fill="#FFFFFF" stroke="#000000" stroke-width="5.2511" d="M409.054,943.852c11.26,9.578,105.462-9.168,170.417-118.619
@@ -70,19 +50,19 @@ g.circle-anime circle {
 			c-56.498,61.321-61.739,160.188,7,216.326c81.232,66.342,203.757,71.697,283.907,65.455
 			c96.671-7.529,196.963-45.268,212.593-131.287c8.625-47.47-6.01-98.762-29.279-133.163c33.603-14.205,57.194-43.472,59.479-82.3
 			C596.732,160.166,563.172,107.876,489.81,102.772z"/>
-		<g>
-			<path stroke="#000000" stroke-width="5" d="M540.549,178.98c11.843,26.522-0.063,57.629-26.58,69.468
+		<g display="none">
+			<path display="inline" stroke="#000000" stroke-width="5" d="M540.549,178.98c11.843,26.522-0.063,57.629-26.58,69.468
 				c-26.534,11.838-57.625-0.059-69.47-26.577c-11.848-26.527,0.064-57.638,26.583-69.477
 				C497.613,140.554,528.706,152.459,540.549,178.98z"/>
-			<path display="none" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="5" d="M528.202,182.826
+			<path display="inline" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="5" d="M528.202,182.826
 				c3.602,8.059-0.021,17.523-8.084,21.116c-8.064,3.6-17.52-0.019-21.123-8.08c-3.595-8.068,0.033-17.526,8.082-21.119
 				C515.147,171.138,524.609,174.753,528.202,182.826z"/>
 		</g>
-		<g>
-			<path stroke="#000000" stroke-width="5" d="M191.627,161.59c11.843,26.522-0.063,57.629-26.58,69.468
+		<g display="none">
+			<path display="inline" stroke="#000000" stroke-width="5" d="M191.627,161.59c11.843,26.522-0.063,57.629-26.58,69.468
 				c-26.534,11.838-57.625-0.059-69.47-26.577c-11.848-26.527,0.064-57.638,26.583-69.477
 				C148.691,123.164,179.784,135.069,191.627,161.59z"/>
-			<path display="none" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="5" d="M179.28,165.436
+			<path display="inline" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="5" d="M179.28,165.436
 				c3.602,8.059-0.021,17.523-8.084,21.116c-8.064,3.6-17.52-0.019-21.123-8.08c-3.595-8.068,0.033-17.526,8.082-21.119
 				C166.226,153.748,175.688,157.363,179.28,165.436z"/>
 		</g>
@@ -90,7 +70,8 @@ g.circle-anime circle {
 			c-2.532-0.079-4.524-2.22-4.442-4.781c0.082-2.561,2.202-4.573,4.736-4.489C199.513,360.847,201.502,362.986,201.421,365.547z"/>
 		<path stroke="#000000" stroke-width="5" d="M321.729,367.356c-0.083,2.562-2.205,4.573-4.738,4.493
 			c-2.532-0.076-4.523-2.218-4.442-4.78c0.081-2.56,2.199-4.569,4.734-4.49C319.816,362.658,321.808,364.798,321.729,367.356z"/>
-		<path fill="none" stroke="#000000" stroke-width="5" d="M155.911,425.265c25.527,45.147,134.418,65.245,226.02,19.998"/>
+		<path display="none" fill="none" stroke="#000000" stroke-width="5" d="M155.911,425.265
+			c25.527,45.147,134.418,65.245,226.02,19.998"/>
 	</g>
 	<g>
 		<path fill="#FFFFFF" stroke="#000000" stroke-width="5" d="M338.471,849.803c5.509,70.348-2.321,101.447-8.403,132.529
@@ -112,45 +93,13 @@ g.circle-anime circle {
 		173.94,60.504 317.569,117.237 471.69,89.239 	"/>
 </g>
 <g id="レイヤー_2">
-	<g id="右目アニメ" class="circle-anime">
-		<circle fill="#B4B3B3" cx="182.168" cy="183.013" r="8.787" style="animation-delay: -0.915s">
-		</circle>
-		<circle fill="#B4B3B3" cx="177.172" cy="164.08" r="8.787" style="animation-delay: -0.832s">
-		</circle>
-		<circle fill="#B4B3B3" cx="162.71" cy="149.617" r="8.787" style="animation-delay: -0.749s">
-		</circle>
-		<circle fill="#B4B3B3" cx="143.777" cy="144.358" r="8.787" style="animation-delay: -0.666s">
-		</circle>
-		<circle fill="#B4B3B3" cx="124.055" cy="149.617" r="8.787" style="animation-delay: -0.583s">
-		</circle>
-		<circle fill="#B4B3B3" cx="110.119" cy="164.08" r="8.787" style="animation-delay: -0.5s">
-		</circle>
-		<circle fill="#B4B3B3" cx="105.123" cy="182.75" r="8.787" style="animation-delay: -0.415s">
-		</circle>
-		<circle fill="#B4B3B3" cx="110.119" cy="202.208" r="8.787" style="animation-delay: -0.332s">
-		</circle>
-		<circle fill="#B4B3B3" cx="124.844" cy="216.145" r="8.787" style="animation-delay: -0.249s">
-		</circle>
-		<circle fill="#B4B3B3" cx="143.777" cy="220.878" r="8.787" style="animation-delay: -0.166s">
-		</circle>
-		<circle fill="#B4B3B3" cx="162.71" cy="215.619" r="8.787" style="animation-delay: -0.083s">
-		</circle>
-		<circle fill="#B4B3B3" cx="176.383" cy="202.208" r="8.787" style="animation-delay: 0s">
-		</circle>
-	</g>
-	<g id="左目アニメ" class="circle-anime">
-		<circle fill="#B4B3B3" cx="531.168" cy="201.013" r="8.787" style="animation-delay: -0.915s" />
-		<circle fill="#B4B3B3" cx="526.172" cy="182.08" r="8.787" style="animation-delay: -0.832s" />
-		<circle fill="#B4B3B3" cx="511.71" cy="167.617" r="8.787" style="animation-delay: -0.749s" />
-		<circle fill="#B4B3B3" cx="492.777" cy="162.358" r="8.787" style="animation-delay: -0.666s" />
-		<circle fill="#B4B3B3" cx="473.055" cy="167.617" r="8.787" style="animation-delay: -0.583s" />
-		<circle fill="#B4B3B3" cx="459.119" cy="182.08" r="8.787" style="animation-delay: -0.5s" />
-		<circle fill="#B4B3B3" cx="454.123" cy="200.75" r="8.787" style="animation-delay: -0.415s" />
-		<circle fill="#B4B3B3" cx="459.119" cy="220.208" r="8.787" style="animation-delay: -0.332s" />
-		<circle fill="#B4B3B3" cx="473.844" cy="234.145" r="8.787" style="animation-delay: -0.249s" />
-		<circle fill="#B4B3B3" cx="492.777" cy="238.878" r="8.787" style="animation-delay: -0.166s" />
-		<circle fill="#B4B3B3" cx="511.71" cy="233.619" r="8.787" style="animation-delay: -0.083s" />
-		<circle fill="#B4B3B3" cx="525.383" cy="220.208" r="8.787" style="animation-delay: 0s" />
+	<polyline fill="none" stroke="#000000" stroke-width="12" stroke-miterlimit="10" points="91.636,208.775 187.176,178.382 
+		91.636,140.018 	"/>
+	<polyline fill="none" stroke="#000000" stroke-width="12" stroke-miterlimit="10" points="544.785,230.561 449.245,200.167 
+		544.785,161.803 	"/>
+	<g>
+		<polyline fill="none" stroke="#000000" stroke-width="6" points="378.361,477.949 352.563,455.051 322.49,471.95 296.688,449.052 
+			266.611,465.95 240.809,443.052 210.731,459.95 184.924,437.051 154.843,453.949 		"/>
 	</g>
 </g>
 </svg>

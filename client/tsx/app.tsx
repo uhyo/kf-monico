@@ -7,6 +7,8 @@ import {default as callStore, CallStoreData} from '../store/call';
 
 import {Page, PageProps, PageState} from './page/index';
 
+import * as errorActions from '../action/error';
+
 import Top from './page/top';
 import Entry from './page/entry';
 import Main from './page/main';
@@ -67,9 +69,9 @@ export default class App extends React.Component<{
                 break;
         }
         //ローディング画面
+        let basepath = document.body.getAttribute("data-basepath");
         let loading = null;
         if(page.loading_content===true){
-            let basepath = document.body.getAttribute("data-basepath");
             let cls = "app-loading";
             if(page.loading===false){
                 cls += " app-loading-hidden";
@@ -90,12 +92,37 @@ export default class App extends React.Component<{
         }else{
             loading = <div className="app-loading app-loading-hidden"/>;
         }
+        //エラー画面
+        let error_cls = "app-error";
+        if(page.error===false){
+            error_cls+=" app-error-hidden";
+        }
+        let error = <div className={error_cls}>
+            <div className="app-error-image">
+                <object data={basepath+"static/komakkero-error.svg"} type="image/svg+xml"/>
+            </div>
+            <div className="app-error-info-wrapper">
+                <section className="app-error-info">
+                    <h1>エラー</h1>
+                    <p>{page.error_message}</p>
+                    <p>
+                        <input type="button" value="OK" onClick={this.errorOkHandler()} />
+                    </p>
+                </section>
+            </div>
+        </div>;
         return <article className="app">
             <h1 className="app-header">KF66 Morning Call System</h1>
             <div className="app-main">
                 {main}
             </div>
             {loading}
+            {error}
         </article>;
+    }
+    private errorOkHandler(){
+        return (e)=>{
+            errorActions.clear(null);
+        };
     }
 }

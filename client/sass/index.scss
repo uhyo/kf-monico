@@ -52,8 +52,7 @@ h1.app-header {
   margin: 8px;
 }
 
-//loading
-.app-loading {
+@mixin sliding {
   position: fixed;
   left: 0;
   top: 0;
@@ -65,9 +64,15 @@ h1.app-header {
   color: white;
 
   transition: top cubic-bezier(0, 0, 0.4, 1) 0.2s;
+}
+
+//loading
+.app-loading {
+  @include sliding;
+
 
   &.app-loading-hidden {
-    top: -100vh;
+    top: -115vh;
   }
 
   .app-loading-info {
@@ -92,5 +97,53 @@ h1.app-header {
       }
     }
 
+  }
+
+}
+.app-error {
+  @include sliding;
+
+  &.app-error-hidden {
+    top: -115vh;
+  }
+
+  .app-error-info-wrapper {
+    position: absolute;
+    left: 0;
+    top: 100px;
+    width: 100%;
+  }
+  .app-error-info {
+    box-sizing: border-box;
+    width: 400px;
+    max-width: 100%;
+    padding: 5px;
+    margin: 0 auto;
+
+    background-color: rgba(#000000, 0.5);
+    h1 {
+      text-align: center;
+      font-weight: bold;
+      font-size: 36px;
+      margin: 0.2em 0;
+    }
+
+    p {
+      text-align: center;
+      font-size: 24px;
+    }
+  }
+
+  .app-error-image {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+
+    object {
+      width: 400px;
+      max-width: 80%;
+    }
   }
 }

@@ -98,7 +98,7 @@ export default class Session{
     sendError(ws:WebSocket,err:Error):void{
         this.send(ws,{
             command: "error",
-            error: String(err)
+            error: err.message || String(err)
         });
     }
     //コマンド処理
