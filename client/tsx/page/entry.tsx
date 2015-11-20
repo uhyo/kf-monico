@@ -24,7 +24,7 @@ export default class Entry extends Page{
             <header>
                 <h1>ユーザー登録</h1>
                 <p>ユーザー情報を入力してください。</p>
-                <p><a href={user.name==null ? "/" : "/home"}>戻る</a></p>
+                <p><a href={user.name==null || this.props.system===true ? "/" : "/home"}>戻る</a></p>
             </header>
             <UserForm system={this.props.system} user={user} onSubmit={this.handleSubmit()}/>
         </section>;
