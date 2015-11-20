@@ -141,7 +141,7 @@ export default class Session{
                             }]);
                         }else if(doc.eccs!=null){
                             //ECCSがあったからユーザーデータを取得
-                            this.findUserToNavigate(ws, doc.eccs);
+                            this.findUserToNavigate(ws, doc.eccs, obj.comid);
                         }
                         //Typing problem
                         //return doc.id;
@@ -182,7 +182,7 @@ export default class Session{
                     this.sendError(ws, new Error("Session Expired"));
                     this.sessionid.delete(ws);
                 }else{
-                    this.findUserToNavigate(ws, obj.eccs);
+                    this.findUserToNavigate(ws, obj.eccs, obj.comid);
                 }
             }).catch((err)=>{
                 this.sendError(ws, err);
@@ -213,7 +213,7 @@ export default class Session{
                         command: "toppage"
                     });
                 }else{
-                    this.findUserToNavigate(ws, eccs);
+                    this.findUserToNavigate(ws, eccs, obj.comid);
                 }
             }).catch((err)=>{
                 this.sendError(ws, err);
@@ -281,7 +281,7 @@ export default class Session{
                 });
             }).then((user:UserDoc)=>{
                 //処理おわり
-                this.findUserToNavigate(ws, user.eccs);
+                this.findUserToNavigate(ws, user.eccs, obj.comid);
             }).catch((err)=>{
                 this.sendError(ws, err);
             });
@@ -646,7 +646,7 @@ export default class Session{
             });
         }
     }
-    private findUserToNavigate(ws:WebSocket, eccs:string):void{
+    private findUserToNavigate(ws:WebSocket, eccs:string, ack:number):void{
         let coll_u = this.db.collection(this.collection.user),
             coll_c = this.db.collection(this.collection.call);
         this.getSystemInfo().then((system:SystemInfo)=>{
@@ -664,7 +664,8 @@ export default class Session{
                         command: "entrypage",
                         eccs,
                         system: udoc!=null,
-                        user: udoc
+                        user: udoc,
+                        ack
                     });
                     return {};
                 });
@@ -673,7 +674,8 @@ export default class Session{
                 this.send(ws, {
                     command: "mainpage",
                     user: udoc,
-                    call: cdoc
+                    call: cdoc,
+                    ack
                 });
                 return {};
             }

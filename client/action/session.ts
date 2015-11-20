@@ -16,9 +16,12 @@ export var login = Reflux.createAction<{
 
 login.listen(({ws, eccs})=>{
     /* eccsであれする */
+    pageActions.loading({loading: true});
     ws.send({
         command: "login",
         eccs
+    }).then(()=>{
+        pageActions.loading({loading: false});
     });
 });
 
@@ -39,7 +42,9 @@ export var call = Reflux.createAction<{
 }>();
 
 call.listen(({ws, call})=>{
+    pageActions.loading({loading: true});
     ws.send(objectAssign({command:"call"}, call)).then(()=>{
+        pageActions.loading({loading: false});
         pageActions.callokPage({});
     });
 });

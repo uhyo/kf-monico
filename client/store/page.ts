@@ -57,6 +57,7 @@ let pageStore = Reflux.createStore({
     onError(err):void{
         //エラーが発生したのでエラーを表示するぜ！！！！！！！！！！
         this.state = objectAssign({},this.state,{
+            loading: false,
             error: true,
             error_message: err.message || err
         });
