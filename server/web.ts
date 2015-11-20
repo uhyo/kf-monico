@@ -44,14 +44,14 @@ export default class Web{
     private initRoute():void{
         let app=this.app, session=this.session;
         let basepath = config.get<string>("webserver.basepath");
+        (app as any).ws("/ws",(ws:WebSocket,req)=>{
+            //WebSocketが来たらsessionに任せる
+            session.add(ws);
+        });
         app.get("*",(req,res)=>{
             res.render("index.ejs",{
                 basepath
             });
-        });
-        (app as any).ws("/",(ws:WebSocket,req)=>{
-            //WebSocketが来たらsessionに任せる
-            session.add(ws);
         });
     }
 }

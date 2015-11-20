@@ -19,7 +19,7 @@ export default class Ws{
     }
     init():void{
         let basepath = document.body.getAttribute("data-basepath");
-        let ws = this.ws = new WebSocket(location.origin.replace(/^http/,"ws")+basepath);
+        let ws = this.ws = new WebSocket(location.origin.replace(/^http/,"ws")+basepath+"ws");
         //ローディングにしておく
         pageActions.loading({
             loading: true
@@ -39,7 +39,8 @@ export default class Ws{
                 let obj = JSON.parse(e.data);
                 this.message(obj);
             }catch(e){
-                ws.close();
+                alert(e.message);
+                //ws.close();
             }
         });
     }
