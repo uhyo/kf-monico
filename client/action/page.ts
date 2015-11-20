@@ -2,7 +2,7 @@
 import * as Reflux from 'reflux';
 import Ws from '../lib/ws';
 
-import {UserDoc, CallDoc, CallDocWithUser} from '../../lib/db';
+import {UserDoc, CallDoc, CallDocWithUser, CommitteeMember} from '../../lib/db';
 
 import * as errorActions from './error';
 
@@ -35,4 +35,8 @@ export var rojinPage = Reflux.createAction<{
     date: number;
     rojin_name: string;
     calls: Array<CallDocWithUser>;
+}>();
+
+export var gotNocall = Reflux.createAction<{
+    nocalls: Array<CommitteeMember>;
 }>();

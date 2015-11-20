@@ -50,3 +50,9 @@ export interface SystemInfo{
     roujin_pass: string;
     key: string;
 }
+
+export interface CommitteeMember{
+    name: string;
+    name_phonetic: string;
+}
+

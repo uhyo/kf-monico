@@ -3,8 +3,9 @@
 
 import Db from './db';
 import Web from './web';
+import {loadCommitteeMembersData} from './members';
 
-import {SessionDoc, UserDoc, CallDoc, CallDocWithUser, SystemInfo} from '../lib/db';
+import {SessionDoc, UserDoc, CallDoc, CallDocWithUser, SystemInfo, CommitteeMember} from '../lib/db';
 
 import * as config from 'config';
 import * as randomString from 'random-string';
@@ -28,6 +29,7 @@ export default class Session{
     private sessionid:WeakMap<any,string>;
     private collection:CollectionNames;
     private systemCache:SystemInfo;
+    private members:Array<CommitteeMember>;
     constructor(private db:Db){
         this.wss=[];
         this.sessionid = new WeakMap<any, string>();
@@ -35,7 +37,10 @@ export default class Session{
         this.systemCache = null;
     }
     init():Promise<{}>{
-        return Promise.resolve({});
+        return loadCommitteeMembersData().then((data)=>{
+            this.members = data;
+            return {};
+        })
     }
     //wsファミリに追加された
     add(ws:any):void{
@@ -526,6 +531,38 @@ export default class Session{
                         next_hour,
                         next_minute
                     });
+                });
+            }).catch((err)=>{
+                this.sendError(ws, err);
+            });
+        }else if(command==="rojin-request-members"){
+            //まだ登録していないメンバーを要求
+            let collc = this.db.collection(this.collection.call);
+            this.getSystemInfo().then((system:SystemInfo)=>{
+                return this.getUserData(sessid).then(({eccs, rojin, rojin_name})=>{
+                    if(rojin===false){
+                        throw new Error("Session Expired");
+                    }
+                    return collc.find({
+                        date: system.date,
+                    }).project({
+                        eccs: 1
+                    }).toArray().then((docs:Array<CallDoc>)=>{
+                        //O(n^2)じゃん
+                        return this.addUserDoc(docs).then((docs:Array<CallDocWithUser>)=>{
+                            const phos = docs.map(d => d.user.name_phonetic.replace(/\s/,""));
+                            let mems = this.members.filter((m:CommitteeMember)=>{
+                                return phos.indexOf(m.name_phonetic)===-1;
+                            });
+                            return mems;
+                        });
+                    });
+                });
+            }).then((members:Array<CommitteeMember>)=>{
+                this.send(ws,{
+                    command: "uncalled-membrs",
+                    members,
+                    ack: obj.comid
                 });
             }).catch((err)=>{
                 this.sendError(ws, err);

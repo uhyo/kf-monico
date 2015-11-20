@@ -221,3 +221,15 @@ section.rojin-console {
   }
 }
 
+section.rojin-uncall {
+  background: repeating-linear-gradient(-45deg , rgba(#ffff33, 0.25), rgba(#ffff33, 0.25) 12px, transparent 12px, transparent 24px);
+  & > h1 {
+    margin: 0;
+    padding: 2px;
+    font-size: 2em;
+    font-weight: normal;
+
+    background: linear-gradient(to right, #ffff00 0%, #ffffff 100%);
+    color: white;
+  }
+}

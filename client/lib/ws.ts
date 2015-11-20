@@ -172,6 +172,6 @@ export default class Ws{
     //送信メッセージがackを必要とするか
     private requiresAck(obj:any):boolean{
         let command:string=obj.command;
-        return command==="session" || command==="login" || command==="call" || command==="rojin-console";
+        return command==="session" || command==="login" || command==="call" || command==="rojin-request-members" || command==="rojin-console";
     }
 }

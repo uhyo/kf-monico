@@ -7,7 +7,7 @@ import * as objectAssign from 'object-assign';
 import * as pageActions from '../action/page';
 import * as errorActions from '../action/error';
 
-import {UserDoc, CallDoc, CallDocWithUser} from '../../lib/db';
+import {UserDoc, CallDoc, CallDocWithUser, CommitteeMember} from '../../lib/db';
 
 export interface PageStoreData{
     //ローディング画面
@@ -25,6 +25,7 @@ export interface PageStoreData{
     user?:UserDoc;
     call?:CallDoc;
     rojin_name?:string;
+    nocalls?:Array<CommitteeMember>;
 }
 
 let pageStore = Reflux.createStore({
@@ -136,6 +137,12 @@ let pageStore = Reflux.createStore({
             rojin_name,
         });
         this.history();
+        this.trigger(this.state);
+    },
+    onGotNocall({nocalls}):void{
+        this.state = objectAssign({},this.state,{
+            nocalls
+        });
         this.trigger(this.state);
     }
 });

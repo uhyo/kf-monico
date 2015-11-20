@@ -10,6 +10,7 @@ import {CallDocWithUser} from '../../../lib/db';
 import RojinPass from '../widgets/rojin-pass';
 
 import * as errorActions from '../../action/error';
+import * as pageActions from '../../action/page';
 
 //老人メインインターフェース
 export default class Rojin extends Page{
@@ -24,7 +25,7 @@ export default class Rojin extends Page{
         (ReactDOM.findDOMNode(this.refs["console-date"]) as HTMLInputElement).value = String(this.props.date);
     }
     render(){
-        const {date, rojin_name, calls} = this.props;
+        const {date, rojin_name, calls, nocalls} = this.props;
 
         //寝ているひとと起きているひとに分割
         const sleepings:Array<CallDocWithUser>=[], preparings:Array<CallDocWithUser>=[];
@@ -102,6 +103,13 @@ export default class Rojin extends Page{
                     }</div>
                 </section>
             </div>
+            <section className="rojin-uncall">
+                <h1>登録していない人</h1>
+                <p><span className="clickable-like" onClick={this.handleUncallRequest()}>情報を更新</span>（ここは自動で変化しません）</p>
+                <p>{
+                    nocalls && nocalls.map(m => m.name_phonetic).join("、")
+                }</p>
+            </section>
             <form onSubmit={this.handleConsoleSubmit()}>
                 <section className="rojin-console">
                     <h1>管理コンソール</h1>
@@ -229,6 +237,18 @@ export default class Rojin extends Page{
             this.setState(objectAssign({},this.state,{
                 [key]: mode
             }));
+        };
+    }
+    private handleUncallRequest(){
+        return (e)=>{
+            e.preventDefault();
+            this.props.ws.send({
+                command: "rojin-request-members"
+            }).then(({members})=>{
+                pageActions.gotNocall({
+                    nocalls: members
+                });
+            });
         };
     }
 }

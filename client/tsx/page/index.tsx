@@ -2,7 +2,7 @@
 import * as React from 'react';
 import Ws from '../../lib/ws';
 
-import {UserDoc, CallDoc, CallDocWithUser} from '../../../lib/db';
+import {UserDoc, CallDoc, CallDocWithUser, CommitteeMember} from '../../../lib/db';
 
 export interface PageProps{
     ws: Ws;
@@ -16,6 +16,7 @@ export interface PageProps{
     date?: number;
     rojin_name?:string;
     calls?:Array<CallDocWithUser>;
+    nocalls?:Array<CommitteeMember>;
 }
 export interface PageState{
     //rojinpage

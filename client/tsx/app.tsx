@@ -65,7 +65,7 @@ export default class App extends React.Component<{
                 main = <RojinTop ws={ws}/>;
                 break;
             case "rojin":
-                main = <Rojin ws={ws} rojin_name={page.rojin_name} date={call.date} calls={call.calls}/>;
+                main = <Rojin ws={ws} rojin_name={page.rojin_name} date={call.date} calls={call.calls} nocalls={page.nocalls}/>;
                 break;
         }
         //ローディング画面
