@@ -49,7 +49,7 @@ export default class Ws{
             command: "session",
             sessionid: localStorage.getItem("monico_sessionid") || null
         }).then((response)=>{
-            if(/*localStorage.getItem("monico_load_flg")!==*/"true"){
+            if(localStorage.getItem("monico_load_flg")!=="true"){
                 //初回ロードだけはわざと長くする
                 setTimeout(()=>{
                     localStorage.setItem("monico_load_flg","true");
