@@ -22,7 +22,7 @@ export default class Ws{
     init():void{
         let basepath = document.body.getAttribute("data-basepath");
         //let ws = this.ws = new WebSocket(location.origin.replace(/^http/,"ws")+basepath+"ws");
-        let ws = this.ws = io();
+        let ws = this.ws = io(location.origin, {path: basepath+"socket.io"});
         //ローディングにしておく
         pageActions.loading({
             loading: true
