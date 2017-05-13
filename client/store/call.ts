@@ -1,6 +1,3 @@
-///<reference path="../../typings/bundle.d.ts" />
-///<reference path="../../typings/reflux.d.ts" />
-
 import * as Reflux from 'reflux';
 import * as objectAssign from 'object-assign';
 

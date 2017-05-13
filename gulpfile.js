@@ -15,13 +15,16 @@ var changed=require('gulp-changed');
 var rename=require('gulp-rename');
 var runSequence=require('run-sequence');
 
+const clientTsProject = typescript.createProject('tsconfig.json', {
+    typescript: ts,
+});
+const serverTsProject = typescript.createProject('tsconfig.json', {
+    typescript: ts,
+});
+
 gulp.task('tsc',()=>{
     return gulp.src("server/**/*.ts")
-    .pipe(typescript({
-        module:"commonjs",
-        target:"es5",
-        typescript:ts,
-    }))
+    .pipe(serverTsProject())
     .js
     .pipe(gulp.dest("js/"));
 });
@@ -30,12 +33,7 @@ gulp.task('watch-tsc', ()=>{
 });
 gulp.task('client-tsc',()=>{
     return gulp.src("client/**/*.{ts,tsx}")
-    .pipe(typescript({
-        module:"commonjs",
-        target:"es5",
-        jsx:"react",
-        typescript:ts
-    }))
+    .pipe(clientTsProject())
     .js
     .pipe(gulp.dest("dest/"));
 });

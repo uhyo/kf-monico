@@ -1,5 +1,3 @@
-///<reference path="../typings/bundle.d.ts" />
-///<reference path="../typings/express-ws.d.ts" />
 import Db from './db';
 import Session from './session';
 

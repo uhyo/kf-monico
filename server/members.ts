@@ -1,5 +1,3 @@
-///<reference path="../typings/bundle.d.ts" />
-///<reference path="../typings/csv-parse.d.ts" />
 import {Promise} from 'es6-promise';
 import * as csvParse from 'csv-parse';
 import * as fs from 'fs';

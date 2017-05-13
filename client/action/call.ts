@@ -1,4 +1,3 @@
-///<reference path="../../typings/reflux.d.ts" />
 import * as Reflux from 'reflux';
 import Ws from '../lib/ws';
 

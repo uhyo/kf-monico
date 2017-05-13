@@ -1,4 +1,3 @@
-///<reference path="../../typings/bundle.d.ts" />
 import * as React from 'react';
 import Ws from '../lib/ws';
 

@@ -1,4 +1,3 @@
-///<reference path="../typings/bundle.d.ts" />
 //クライアントとの　接　続　を一挙に管理するひとだ
 
 import Db from './db';
@@ -10,6 +9,7 @@ import {SessionDoc, UserDoc, CallDoc, CallDocWithUser, SystemInfo, CommitteeMemb
 import * as config from 'config';
 import * as randomString from 'random-string';
 import * as objectAssign from 'object-assign';
+import * as WebSocket from 'ws';
 
 import * as validator from './validator';
 import sha256sum from './sha256sum';

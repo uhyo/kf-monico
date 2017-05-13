@@ -1,4 +1,3 @@
-///<reference path="../../typings/reflux.d.ts" />
 import * as Reflux from 'reflux';
 import * as objectAssign from 'object-assign';
 import Ws from '../lib/ws';
