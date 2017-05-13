@@ -2,11 +2,10 @@
 var path=require('path');
 var gulp=require('gulp');
 var gulputil=require('gulp-util');
-var browserify=require('browserify');
+
+const webpack = require('webpack');
+
 var source=require('vinyl-source-stream');
-var babelify=require('babelify');
-var uglifyify=require('uglifyify');
-var watchify=require('watchify');
 var typescript=require('gulp-typescript');
 var ts=require('typescript');
 var del=require('del');
@@ -21,12 +20,15 @@ gulp.task('tsc',()=>{
     .pipe(typescript({
         module:"commonjs",
         target:"es5",
-        typescript:ts
+        typescript:ts,
     }))
     .js
     .pipe(gulp.dest("js/"));
 });
-gulp.task('tsx-tsc',()=>{
+gulp.task('watch-tsc', ()=>{
+    gulp.watch(['server/**/*.ts'], ['tsc']);
+});
+gulp.task('client-tsc',()=>{
     return gulp.src("client/**/*.{ts,tsx}")
     .pipe(typescript({
         module:"commonjs",
@@ -37,18 +39,14 @@ gulp.task('tsx-tsc',()=>{
     .js
     .pipe(gulp.dest("dest/"));
 });
-gulp.task('jsx',()=>{
-    return browserifier(false);
+gulp.task('watch-client-tsc', ()=>{
+    gulp.watch(['client/**/*.{ts,tsx}'], ['client-tsc']);
 });
-gulp.task('watch-jsx',()=>{
-    return browserifier(true);
+gulp.task('bundle', ['client-tsc'], ()=>{
+    return bundler(false);
 });
-gulp.task('tsx',(callback)=>{
-    return runSequence(
-        'tsx-tsc',
-        'jsx',
-        callback
-    );
+gulp.task('watch-bundle', ['watch-client-tsc'], ()=>{
+    return bundler(true);
 });
 gulp.task('sass',()=>{
     return gulp.src("client/sass/index.scss")
@@ -65,7 +63,7 @@ gulp.task('static',function(){
     .pipe(gulp.dest("dist/"));
 });
 
-gulp.task('clean',()=>{
+gulp.task('clean',(cb)=>{
     del([
         "js",
         "server/**/*.js",
@@ -74,45 +72,37 @@ gulp.task('clean',()=>{
     ],cb);
 });
 
-gulp.task('watch',['tsx-tsc','watch-jsx','tsc','sass'],()=>{
-    gulp.watch('server/**/*.ts',['tsc']);
-    gulp.watch('client/**/*.{ts,tsx}',['tsx-tsc']);
+gulp.task('watch',['watch-client-tsc','watch-tsc','watch-bundle','sass'],()=>{
     gulp.watch('client/sass/**/*.scss',['sass']);
 });
 
-gulp.task('default',['tsx','tsc','sass','static']);
+gulp.task('default',['tsc','client-tsc','bundle','sass','static']);
 
-function browserifier(watch){
-    let opts={
-        entries:[path.join(__dirname,"dest/tsx/entrypoint.js")],
-        extensions:['.js'],
-        basedir:__dirname
-    };
-    if(watch){
-        opts.cache={};
-        opts.packageCache={};
-        opts.fullPaths=true;
-    }
-    let b=browserify(opts);
-    if(watch){
-        b=watchify(b);
-    }
-    b
-    //.transform(babelify)
-    .transform(uglifyify,{global:true})
-    .on('update',bundle);
-    bundle();
+function bundler(watch){
+  const compiler = webpack(require('./webpack.config.js'));
 
-    function bundle(){
-        gulputil.log('recompiling jsx');
-
-        b
-        .bundle()
-        .on('error',function(err){
-            console.error(err);
-        })
-        .pipe(duration("compiled jsx"))
-        .pipe(source("components.js"))
-        .pipe(gulp.dest("dist/"));
-    }
+  const handleStats = (stats, watch)=>{
+      console.log(stats.toString({
+          chunks: !watch,
+          colors: true,
+      }));
+  };
+  if (watch){
+      return compiler.watch({
+      }, (err, stats)=>{
+          if (err){
+              console.error(err);
+              return;
+          }
+          handleStats(stats, true);
+      });
+  }else{
+      return compiler.run((err, stats)=>{
+          if (err){
+              console.error(err);
+              return;
+          }
+          handleStats(stats, false);
+      });
+  }
 }
