@@ -1,41 +1,43 @@
-import * as Reflux from 'reflux';
 import Ws from '../lib/ws';
+import {
+    createAction,
+} from '../reflux';
 
 import {UserDoc, CallDoc, CallDocWithUser, CommitteeMember} from '../../lib/db';
 
 import * as errorActions from './error';
 
 //ロード
-export var loading = Reflux.createAction<{
+export var loading = createAction<{
     loading: boolean;
 }>();
 
 //ページ遷移
-export var topPage = Reflux.createAction<{}>();
+export var topPage = createAction<{}>();
 
-export var entryPage = Reflux.createAction<{
+export var entryPage = createAction<{
     system?: boolean;
     eccs: string;
     user?: UserDoc;
 }>();
 
-export var mainPage = Reflux.createAction<{
+export var mainPage = createAction<{
     user: UserDoc;
     call: CallDoc;
 }>();
 
 //ok
-export var callokPage = Reflux.createAction<{}>();
+export var callokPage = createAction<{}>();
 
 //老人向け
-export var rojinTop = Reflux.createAction<{}>();
+export var rojinTop = createAction<{}>();
 
-export var rojinPage = Reflux.createAction<{
+export var rojinPage = createAction<{
     date: number;
     rojin_name: string;
     calls: Array<CallDocWithUser>;
 }>();
 
-export var gotNocall = Reflux.createAction<{
+export var gotNocall = createAction<{
     nocalls: Array<CommitteeMember>;
 }>();

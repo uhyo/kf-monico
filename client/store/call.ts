@@ -1,5 +1,6 @@
-import * as Reflux from 'reflux';
-import * as objectAssign from 'object-assign';
+import {
+    Store,
+} from '../reflux';
 
 import * as pageActions from '../action/page';
 import * as callActions from '../action/call';
@@ -11,96 +12,114 @@ export interface CallStoreData{
     calls:Array<CallDocWithUser>;
 }
 
-let callStore = Reflux.createStore({
-    getInitialState():CallStoreData{
-        return this.state;
-    },
-    init():void{
+export class CallStore extends Store<CallStoreData>{
+    constructor(){
+        super();
         this.state = {
+            date: 0,
             calls: [],
         };
         this.listenToMany(callActions);
-        this.listenTo(pageActions.rojinPage,this.onRojinPage);
-    },
+        this.listenTo(pageActions.rojinPage, this.onRojinPage.bind(this));
+    }
     onInit({calls}):void{
-        this.state=objectAssign({}, this.state, {calls});
+        this.state = {
+            ... this.state,
+            calls,
+        };
         this.trigger(this.state);
-    },
+    }
     onRojinPage({date, calls}):void{
-        this.state=objectAssign({}, this.state, {date, calls});
+        this.state = {
+            ... this.state,
+            date,
+            calls,
+        };
         this.trigger(this.state);
-    },
+    }
 
     onCall({date, eccs, rojin_name}):void{
-        this.state = objectAssign({}, this.state, {
+        this.state = {
+            ... this.state,
             calls: this.state.calls.map(call =>
                            call.eccs===eccs ?
-                           objectAssign({},call,{
-                               occupied: true,
-                               occupied_by: rojin_name
-                           }) :
-                           call)
-        });
+                            {
+                                ... call,
+                                occupied: true,
+                                occupied_by: rojin_name,
+                            } :
+                           call),
+        };
         this.trigger(this.state);
-    },
+    }
     onCallCancel({date, rojin_name}):void{
-        this.state = objectAssign({}, this.state, {
+        this.state = {
+            ... this.state,
             calls: this.state.calls.map(call =>
                            call.date===date && call.occupied_by===rojin_name ?
-                           objectAssign({},call,{
-                               occupied: false,
-                               occupied_by: ""
-                           }) :
-                           call)
-        });
+                            {
+                                ... call,
+                                occupied: false,
+                                occupied_by: '',
+                           } :
+                           call),
+        };
         this.trigger(this.state);
-    },
+    }
     onWake({date, eccs}):void{
-        this.state = objectAssign({}, this.state, {
+        this.state = {
+            ... this.state,
             calls: this.state.calls.map(call =>
                            call.date===date && call.eccs===eccs ?
-                           objectAssign({},call,{
-                               awake: true,
-                               confirmed: false,
-                               occupied: false,
-                               occupied_by: ""
-                           }) :
-                           call)
-        });
+                            {
+                                ... call,
+                                awake: true,
+                                confirmed: false,
+                                occupied: false,
+                                occupied_by: '',
+                           } :
+                           call),
+        };
         this.trigger(this.state);
-    },
+    }
     onConfirm({date, eccs}):void{
-        this.state = objectAssign({}, this.state, {
+        this.state = {
+            ... this.state,
             calls: this.state.calls.map(call =>
                            call.date===date && call.eccs===eccs ?
-                           objectAssign({},call,{
-                               awake: true,
-                               confirmed: true,
-                               occupied: false,
-                               occupied_by: ""
-                           }) :
-                           call)
-        });
+                            {
+                                ... call,
+                                awake: true,
+                                confirmed: true,
+                                occupied: false,
+                                occupied_by: '',
+                           } :
+                           call),
+        };
         this.trigger(this.state);
-    },
+    }
     onSnooze({date, eccs, next_hour, next_minute}):void{
-        this.state = objectAssign({}, this.state, {
+        this.state = {
+            ... this.state,
             calls: this.state.calls.map(call =>
                            call.date===date && call.eccs===eccs ?
-                           objectAssign({},call,{
-                               occupied: false,
-                               occupied_by: "",
-                               next_hour,
-                               next_minute,
-                               snooze: call.snooze+1
-                           }) :
+                            {
+                                ... call,
+                                occupied: false,
+                                occupied_by: '',
+                                next_hour,
+                                next_minute,
+                                snooze: call.snooze+1,
+                           } :
                            call).sort((call1,call2)=>{
                                return call1.next_hour - call2.next_hour || call1.next_minute - call2.next_minute;
-                           })
-        });
+                           }),
+        };
         this.trigger(this.state);
-    },
-});
+    }
+}
+
+let callStore = new CallStore();
 
 export default callStore;
 

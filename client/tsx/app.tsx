@@ -27,8 +27,8 @@ export default class App extends React.Component<{
     constructor(){
         super();
         this.state = {
-            page: pageStore.getInitialState(),
-            call: callStore.getInitialState(),
+            page: pageStore.state,
+            call: callStore.state,
         };
     }
     componentDidMount(){
@@ -77,7 +77,9 @@ export default class App extends React.Component<{
             }
             let obj = page.loading_type===0 ?
                 basepath+"static/komakkero-loading.svg" :
-                basepath+"static/komakkero-loading2.svg";
+                page.loading_type === 1 ?
+                basepath+"static/komakkero-loading2.svg" :
+                basepath+"static/may-anime.svg";
             loading = <div className={cls}>
                 <div className="app-loading-info">
                     <p>Loading...</p>

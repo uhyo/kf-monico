@@ -1,9 +1,12 @@
 import * as Reflux from 'reflux';
+import {
+    createAction,
+} from '../reflux';
 
-export var error = Reflux.createAction<Error>();
+export var error = createAction<Error>();
 
 error.listen((err)=>{
     console.error(err);
 });
 
-export var clear = Reflux.createAction<void>();
+export var clear = createAction<void>();

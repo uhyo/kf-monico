@@ -17,6 +17,7 @@ var runSequence=require('run-sequence');
 
 const clientTsProject = typescript.createProject('tsconfig.json', {
     typescript: ts,
+    module: 'es2015',
 });
 const serverTsProject = typescript.createProject('tsconfig.json', {
     typescript: ts,
@@ -28,7 +29,7 @@ gulp.task('tsc',()=>{
     .js
     .pipe(gulp.dest("js/"));
 });
-gulp.task('watch-tsc', ()=>{
+gulp.task('watch-tsc', ['tsc'], ()=>{
     gulp.watch(['server/**/*.ts'], ['tsc']);
 });
 gulp.task('client-tsc',()=>{
@@ -37,7 +38,7 @@ gulp.task('client-tsc',()=>{
     .js
     .pipe(gulp.dest("dest/"));
 });
-gulp.task('watch-client-tsc', ()=>{
+gulp.task('watch-client-tsc', ['client-tsc'], ()=>{
     gulp.watch(['client/**/*.{ts,tsx}'], ['client-tsc']);
 });
 gulp.task('bundle', ['client-tsc'], ()=>{

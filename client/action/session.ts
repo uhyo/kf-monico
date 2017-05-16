@@ -1,6 +1,9 @@
-import * as Reflux from 'reflux';
 import * as objectAssign from 'object-assign';
 import Ws from '../lib/ws';
+
+import {
+    createAction,
+} from '../reflux';
 
 
 import {UserDoc, CallEntry} from '../../lib/db';
@@ -8,7 +11,7 @@ import {UserDoc, CallEntry} from '../../lib/db';
 import * as errorActions from './error';
 import * as pageActions from './page';
 
-export var login = Reflux.createAction<{
+export var login = createAction<{
     ws: Ws;
     eccs: string;
 }>();
@@ -25,7 +28,7 @@ login.listen(({ws, eccs})=>{
 });
 
 //ユーザー情報登録
-export var entry = Reflux.createAction<{
+export var entry = createAction<{
     ws: Ws,
     user: UserDoc
 }>();
@@ -35,7 +38,7 @@ entry.listen(({ws, user})=>{
 });
 
 //モニコ登録
-export var call = Reflux.createAction<{
+export var call = createAction<{
     ws: Ws,
     call: CallEntry
 }>();

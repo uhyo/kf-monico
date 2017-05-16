@@ -1,12 +1,12 @@
 //ws with server
 
-import * as extend from 'extend';
-
 import * as errorActions from '../action/error';
 import * as pageActions from '../action/page';
 import * as callActions from '../action/call';
 
 declare var io:any;
+
+const loading_debug = true;
 
 export default class Ws{
     private ws:any;
@@ -47,14 +47,14 @@ export default class Ws{
             command: "session",
             sessionid: localStorage.getItem("monico_sessionid") || null
         }).then((response)=>{
-            if(localStorage.getItem("monico_load_flg")!=="true"){
+            if(loading_debug || localStorage.getItem("monico_load_flg")!=="true"){
                 //初回ロードだけはわざと長くする
                 setTimeout(()=>{
                     localStorage.setItem("monico_load_flg","true");
                     pageActions.loading({
                         loading: false
                     });
-                },7000);
+                },11000);
             }else{
                 pageActions.loading({
                     loading: false
@@ -69,9 +69,10 @@ export default class Ws{
     send(obj:any):Promise<any>{
         //コマンドを送信
         let comid = this.comid++;
-        let com = extend({},obj,{
-            comid
-        });
+        let com = {
+            ... obj,
+            comid,
+        };
         this.ws.emit("message",com);
         if(this.requiresAck(obj)){
             return new Promise((fulfilled, rejected)=>{
