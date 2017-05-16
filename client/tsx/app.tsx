@@ -113,7 +113,7 @@ export default class App extends React.Component<{
             </div>
         </div>;
         return <article className="app">
-            <h1 className="app-header">KF66 Morning Call System</h1>
+            <h1 className="app-header">MF90 Morning Call System</h1>
             <div className="app-main">
                 {main}
             </div>
