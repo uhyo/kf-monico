@@ -4,6 +4,7 @@ import * as path from 'path';
 
 import {
     CommitteeMember,
+    RojinMember,
 } from '../lib/db';
 
 //委員のデータをよみこむ
@@ -33,7 +34,7 @@ export function loadCommitteeMembersData():Promise<Array<CommitteeMember>>{
 }
 
 // 老人のデータ
-export function loadRojinData(): Promise<Array<CommitteeMember>>{
+export function loadRojinData(): Promise<Array<RojinMember>>{
     return new Promise((fulfill, reject)=>{
         fs.readFile(path.resolve(__dirname, "..", "data", "rojin-members.csv"), "utf8", (err,data)=>{
             if(err){
@@ -47,10 +48,11 @@ export function loadRojinData(): Promise<Array<CommitteeMember>>{
                     reject(err);
                     return;
                 }
-                fulfill(rows.map(([,name,name_phonetic])=>{
+                fulfill(rows.map(([,name,name_phonetic,leader])=>{
                     return {
                         name,
-                        name_phonetic
+                        name_phonetic,
+                        leader: leader === 'true',
                     };
                 }));
             });

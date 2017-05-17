@@ -4,6 +4,7 @@ export interface SessionDoc{
     eccs:string;
     rojin:boolean;
     rojin_name:string;
+    rojin_leader:boolean;
     time:Date;
 }
 
@@ -56,3 +57,9 @@ export interface CommitteeMember{
     name_phonetic: string;
 }
 
+
+export interface RojinMember{
+    name: string;
+    name_phonetic: string;
+    leader: boolean;
+}

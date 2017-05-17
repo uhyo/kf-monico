@@ -7,7 +7,7 @@ import {
     loadRojinData,
 } from './members';
 
-import {SessionDoc, UserDoc, CallDoc, CallDocWithUser, SystemInfo, CommitteeMember} from '../lib/db';
+import {SessionDoc, UserDoc, CallDoc, CallDocWithUser, SystemInfo, CommitteeMember, RojinMember} from '../lib/db';
 
 import * as config from 'config';
 import * as randomString from 'random-string';
@@ -33,7 +33,7 @@ export default class Session{
     private collection:CollectionNames;
     private systemCache:SystemInfo;
     private members:Array<CommitteeMember>;
-    public rojins: Array<CommitteeMember>;
+    public rojins: Array<RojinMember>;
     constructor(private db:Db){
         this.wss=[];
         this.sessionid = new WeakMap<any, string>();
@@ -115,7 +115,8 @@ export default class Session{
                             //老人セッションだ
                             this.navigateRojin([{
                                 ws,
-                                rojin_name: doc.rojin_name
+                                rojin_name: doc.rojin_name,
+                                rojin_leader: doc.rojin_leader,
                             }]);
                         }else if(doc.eccs!=null){
                             //ECCSがあったからユーザーデータを取得
@@ -319,12 +320,16 @@ export default class Session{
                 if(sha256sum(obj.pass) !== system.roujin_pass){
                     throw new Error("パスワードが違います。");
                 }
+                console.log(this.rojins);
+                const rojinObj = this.rojins.filter(({name})=> name === obj.name)[0];
+                const rojin_leader = rojinObj != null && rojinObj.leader;
                 return coll.updateOne({
                     id: sessid
                 },{
                     $set: {
                         rojin: true,
                         rojin_name:obj.name,
+                        rojin_leader,
                     }
                 }).then((result)=>{
                     if(result.result && result.result.n === 0){
@@ -334,9 +339,9 @@ export default class Session{
                     }else{
                         this.navigateRojin([{
                             ws,
-                            rojin_name: obj.name
+                            rojin_name: obj.name,
+                            rojin_leader,
                         }]);
-
                     }
                 });
             }).catch((err)=>{
@@ -715,7 +720,8 @@ export default class Session{
     }
     private navigateRojin(rojins:Array<{
         ws:WebSocket;
-        rojin_name:string
+        rojin_name:string;
+        rojin_leader: boolean;
     }>):void{
         //老人のメインページをセッティング
         this.getSystemInfo().then((system:SystemInfo)=>{
@@ -727,11 +733,12 @@ export default class Session{
                 return this.addUserDoc(docs);
             }).then((calls)=>{
                 for(let i=0, l=rojins.length; i<l; i++){
-                    const {ws, rojin_name} = rojins[i];
+                    const {ws, rojin_name, rojin_leader} = rojins[i];
                     this.send(ws, {
                         command: "rojinpage",
                         date,
                         rojin_name,
+                        rojin_leader,
                         calls
                     });
                 }
@@ -749,10 +756,10 @@ export default class Session{
             rojin_name: 1
         }).toArray().then((docs:Array<SessionDoc>)=>{
             //テーブルをつくる
-            let table = <{[sessid:string]:string}>{};
+            let table = <{[sessid:string]:[string,boolean]}>{};
             for(let i=0, l=docs.length; i<l; i++){
-                let {id, rojin_name} = docs[i];
-                table[id]=rojin_name;
+                let {id, rojin_name, rojin_leader} = docs[i];
+                table[id]=[rojin_name, rojin_leader];
             }
             //老人をあつめた
             this.navigateRojin(this.wss.map((ws)=>{
@@ -760,7 +767,8 @@ export default class Session{
                 if(sessid && table[sessid]){
                     return {
                         ws,
-                        rojin_name: table[sessid]
+                        rojin_name: table[sessid][0],
+                        rojin_leader: table[sessid][1],
                     };
                 }else{
                     return null;

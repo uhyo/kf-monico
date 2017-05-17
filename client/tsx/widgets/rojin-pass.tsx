@@ -7,6 +7,7 @@ export interface IPropRojinPass{
     rojins: Array<{
         name: string;
         name_phonetic: string;
+        leader: boolean;
     }>;
     onSubmit(obj:{
         name:string;
