@@ -2,7 +2,10 @@
 
 import Db from './db';
 import Web from './web';
-import {loadCommitteeMembersData} from './members';
+import {
+    loadCommitteeMembersData,
+    loadRojinData,
+} from './members';
 
 import {SessionDoc, UserDoc, CallDoc, CallDocWithUser, SystemInfo, CommitteeMember} from '../lib/db';
 
@@ -30,6 +33,7 @@ export default class Session{
     private collection:CollectionNames;
     private systemCache:SystemInfo;
     private members:Array<CommitteeMember>;
+    public rojins: Array<CommitteeMember>;
     constructor(private db:Db){
         this.wss=[];
         this.sessionid = new WeakMap<any, string>();
@@ -39,8 +43,10 @@ export default class Session{
     init():Promise<{}>{
         return loadCommitteeMembersData().then((data)=>{
             this.members = data;
+        }).then(loadRojinData).then((data)=>{
+            this.rojins = data;
             return {};
-        })
+        });
     }
     //wsファミリに追加された
     add(ws:any):void{

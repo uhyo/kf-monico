@@ -44,7 +44,8 @@ export default class Web{
         let basepath = config.get<string>("webserver.basepath");
         app.get("/*",(req,res)=>{
             res.render("index.ejs",{
-                basepath
+                basepath,
+                rojins: session.rojins,
             });
         });
 

@@ -9,9 +9,10 @@ export default class RojinTop extends Page{
         super(props);
     }
     render(){
+        const rojins = JSON.parse(document.getElementById('rojin-data').dataset.rojins);
         return <div className="page-rojin-top">
             <div className="top-form">
-                <RojinPass onSubmit={this.handleSubmit()}/>
+                <RojinPass rojins={rojins} onSubmit={this.handleSubmit()}/>
             </div>
             <div className="top-link">
                 <p><a href="/">もどる</a></p>
