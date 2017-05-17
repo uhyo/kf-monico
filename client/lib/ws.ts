@@ -6,7 +6,7 @@ import * as callActions from '../action/call';
 
 declare var io:any;
 
-const loading_debug = true;
+const loading_debug = false;
 
 export default class Ws{
     private ws:any;

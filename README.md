@@ -1,8 +1,8 @@
-# KF66 Morning Call System
-author: KF65syz
+# MF90 Morning Call System
+author: KF65syz/MF89SYS
 
 ## 概要
-KF66当日のモーニングコールを登録するシステムです。
+MF90当日のモーニングコールを登録するシステムです。
 
 ## 技術詳細
 サーバーサイドは当然のごとくnode.jsです。Webサーバーにexpressを使用するいつもの構成です。ただし、WebSocketサーバーも同居しています。
