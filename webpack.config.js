@@ -16,7 +16,7 @@ const plugins =
     [];
 
 module.exports = {
-    devtool: 'source-map',
+    devtool: process.env.NODE_ENV === 'production' ? false : 'source-map',
     entry: './dest/tsx/entrypoint.js',
     output: {
         path: path.join(__dirname, 'dist'),
