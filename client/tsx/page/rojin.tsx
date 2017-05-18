@@ -19,19 +19,24 @@ export default class Rojin extends Page{
         this.state = {
             sleeping_sort_mode: "time",
             preparing_sort_mode: "time",
+            sleeping_show_mode: 'all',
         };
     }
     componentDidUpdate(){
-        (ReactDOM.findDOMNode(this.refs["console-date"]) as HTMLInputElement).value = String(this.props.date);
+        (this.refs["console-date"] as HTMLInputElement).value = String(this.props.date);
     }
     render(){
         const {date, rojin_name, calls, nocalls} = this.props;
 
         //寝ているひとと起きているひとに分割
         const sleepings:Array<CallDocWithUser>=[], preparings:Array<CallDocWithUser>=[];
+        let all_sleepings_count = 0;
         for(let i=0, l=calls.length; i<l; i++){
             if(calls[i].awake===false){
-                sleepings.push(calls[i]);
+                if (this.state.sleeping_show_mode === 'all' || calls[i].assigned === rojin_name){
+                    sleepings.push(calls[i]);
+                }
+                all_sleepings_count++;
             }else if(calls[i].confirmed===false){
                 preparings.push(calls[i]);
             }
@@ -76,18 +81,42 @@ export default class Rojin extends Page{
                                     <p><input type="button" value="スヌーズ" onClick={this.snoozeHandler(mine.eccs)}/></p>
                                 </div>
                             </section>;
+        // clickable class
+        const clcl = (key: string, value: string)=>{
+            let result = 'clickable-like';
+            if (this.state[key] === value){
+                result += ' clickable-like-selected';
+            }
+            return result;
+        };
+        // 人数情報
+        let ninzu_info;
+        if (this.state.sleeping_show_mode === 'all'){
+            ninzu_info = <p>
+                寝ている人は<b>{sleepings.length}人</b>います。
+            </p>;
+        }else{
+            ninzu_info = <p>
+                割り当てられている人は<b>{sleepings.length}人</b>います。
+                （寝ている人：<b>{all_sleepings_count}人</b>）
+            </p>;
+        }
         return <section className="page-rojin">
             <h1>老人ホーム</h1>
-            <p>老人ページです。</p>
+            <p>老人ページです。ログイン中：<b>{rojin_name}</b></p>
             <p><a href="/">もどる</a></p>
             <div className="rojin-wrapper">
                 <section className="rojin-sleepings">
                     <h1>寝ている人</h1>
                     {call_main}
-                    <p>寝ている人は<b>{sleepings.length}人</b>います。　
-                        <span className="clickable-like" onClick={this.handleSortMode("sleeping_sort_mode","time")}>時間でソート</span>｜
-                        <span className="clickable-like" href="#" onClick={this.handleSortMode("sleeping_sort_mode","phonetic")}>名前でソート</span>
-                        </p>
+                    {ninzu_info}
+                    <p>
+                        <span className={clcl('sleeping_sort_mode', 'time')} onClick={this.handleSortMode("sleeping_sort_mode","time")}>時間でソート</span>｜
+                        <span className={clcl('sleeping_sort_mode', 'phonetic')} href="#" onClick={this.handleSortMode("sleeping_sort_mode","phonetic")}>名前でソート</span>
+                        {"　　　"}
+                        <span className={clcl('sleeping_show_mode', 'mine')} onClick={this.handleSortMode('sleeping_show_mode', 'mine')}>自分に割り当てられた人のみ表示</span>｜
+                        <span className={clcl('sleeping_show_mode', 'all')} onClick={this.handleSortMode('sleeping_show_mode', 'all')}>全て表示</span>
+                    </p>
                     <div className="rojin-sleepings-box">{
                         this.callList(sleepings,false)
                     }</div>
@@ -234,9 +263,10 @@ export default class Rojin extends Page{
     private handleSortMode(key:string, mode:string){
         return (e)=>{
             e.preventDefault();
-            this.setState(objectAssign({},this.state,{
-                [key]: mode
-            }));
+            this.setState({
+                ... this.state,
+                [key]: mode,
+            });
         };
     }
     private handleUncallRequest(){

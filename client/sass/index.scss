@@ -17,6 +17,9 @@ span.clickable-like {
   text-decoration: underline;
   cursor: pointer;
 }
+span.clickable-like.clickable-like-selected {
+  font-weight: bold;
+}
 
 //util
 input[type="text"], input[type="password"], input[type="tel"], input[type="number"], select {

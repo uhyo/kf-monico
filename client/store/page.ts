@@ -23,6 +23,7 @@ export interface PageStoreData{
     user?:UserDoc;
     call?:CallDoc;
     rojin_name?:string;
+    rojin_leader?:boolean;
     nocalls?:Array<CommitteeMember>;
 }
 
@@ -138,12 +139,14 @@ export class PageStore extends Store<PageStoreData>{
         this.trigger(this.state);
     }
     onRojinPage({
-        rojin_name
+        rojin_name,
+        rojin_leader,
     }):void{
         this.state = {
             ... this.state,
             page: "rojin",
             rojin_name,
+            rojin_leader,
         };
         this.history();
         this.trigger(this.state);

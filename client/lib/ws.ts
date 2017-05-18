@@ -118,6 +118,7 @@ export default class Ws{
                 pageActions.rojinPage({
                     date: obj.date,
                     rojin_name: obj.rojin_name,
+                    rojin_leader: obj.rojin_leader,
                     calls: obj.calls
                 });
                 break;

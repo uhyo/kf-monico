@@ -38,8 +38,10 @@ export interface CallDoc extends CallEntry{
     confirmed:boolean;
     //かけているか
     occupied:boolean;
-    //担当老人
+    //電話をかけている老人
     occupied_by:string;
+    //担当割当老人
+    assigned: string;
 }
 
 export interface CallDocWithUser extends CallDoc{
