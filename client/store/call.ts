@@ -117,6 +117,19 @@ export class CallStore extends Store<CallStoreData>{
         };
         this.trigger(this.state);
     }
+    onAssign({date, eccs, rojin_name}): void{
+        this.state = {
+            ... this.state,
+            calls: this.state.calls.map(call =>
+                call.date===date && call.eccs===eccs ?
+                {
+                    ... call,
+                    assigned: rojin_name,
+                } :
+                call),
+        };
+        this.trigger(this.state);
+    }
 }
 
 let callStore = new CallStore();

@@ -15,6 +15,7 @@ export interface PageProps{
     //rojinpage
     date?: number;
     rojin_name?:string;
+    rojin_leader?:boolean;
     calls?:Array<CallDocWithUser>;
     nocalls?:Array<CommitteeMember>;
 }

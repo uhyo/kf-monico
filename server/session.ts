@@ -616,6 +616,42 @@ export default class Session{
             }).catch((err)=>{
                 this.sendError(ws, err);
             });
+        }else if(command==="rojin-assign"){
+            // 老人の割り当て
+            const {
+                eccs,
+                rojin_name,
+            } = obj;
+            if ('string' !== typeof eccs || 'string' !== typeof rojin_name){
+                this.sendError(ws, new Error('は？'));
+                return;
+            }
+            this.getSystemInfo().then((system:SystemInfo)=>{
+                return this.getUserData(sessid).then(({eccs, rojin})=>{
+                    if(rojin===false){
+                        throw new Error("Session Expired");
+                    }
+                    let collc = this.db.collection(this.collection.call);
+                    return collc.updateOne({
+                        eccs: obj.eccs,
+                        date: system.date,
+                        awake: false,
+                    },{
+                        $set:{
+                            assigned: rojin_name,
+                        }
+                    }).then(()=>{
+                        this.publish({
+                            command: "rojin-assign",
+                            eccs: obj.eccs,
+                            date: system.date,
+                            rojin_name,
+                        });
+                    });
+                });
+            }).catch((err)=>{
+                this.sendError(ws, err);
+            });
         }
     }
     private publish(obj:any):void{

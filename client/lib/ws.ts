@@ -156,7 +156,13 @@ export default class Ws{
                     next_minute: obj.next_minute
                 });
                 break;
-
+            case "rojin-assign":
+                callActions.assign({
+                    date: obj.date,
+                    eccs: obj.eccs,
+                    rojin_name: obj.rojin_name,
+                });
+                break;
         }
         let ack:number=obj.ack;
         if("number"!==typeof ack){

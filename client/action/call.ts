@@ -37,3 +37,8 @@ export var snooze = createAction<{
     next_hour: number;
     next_minute: number;
 }>();
+export var assign = createAction<{
+    date: number;
+    eccs: string;
+    rojin_name: string;
+}>();

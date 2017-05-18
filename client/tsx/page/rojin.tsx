@@ -5,7 +5,10 @@ import * as objectAssign from 'object-assign';
 import {Page} from './index';
 
 
-import {CallDocWithUser} from '../../../lib/db';
+import {
+    CallDocWithUser,
+    RojinMember,
+} from '../../../lib/db';
 
 import RojinPass from '../widgets/rojin-pass';
 
@@ -14,6 +17,7 @@ import * as pageActions from '../../action/page';
 
 //老人メインインターフェース
 export default class Rojin extends Page{
+    private rojins: Array<RojinMember>;
     constructor(props){
         super(props);
         this.state = {
@@ -27,6 +31,11 @@ export default class Rojin extends Page{
     }
     render(){
         const {date, rojin_name, calls, nocalls} = this.props;
+
+        // 老人情報を読み込み
+        if (this.rojins == null){
+            this.rojins = JSON.parse(document.getElementById('rojin-data').dataset.rojins);
+        }
 
         //寝ているひとと起きているひとに分割
         const sleepings:Array<CallDocWithUser>=[], preparings:Array<CallDocWithUser>=[];
@@ -163,6 +172,20 @@ export default class Rojin extends Page{
         </section>;
     }
     private callList(list:Array<CallDocWithUser>,awake:boolean){
+        const makeRojinForm = (call: CallDocWithUser)=>{
+            if (!this.props.rojin_leader){
+                const rojin_name = call.assigned || 'なし';
+                return <p>担当老人：{rojin_name}</p>;
+            }
+            return <p>担当老人：<select defaultValue={call.assigned || ''} className="rojin-assign-select" onClick={this.assignHandler(call.eccs)}>
+                <option value="">なし</option>
+                {
+                    this.rojins.map(({name})=>{
+                        return <option key={name} value={name}>{name}</option>;
+                    })
+                }
+            </select></p>
+        };
         return list.map((call)=>{
             let call_btn = null;
             if(call.occupied === false){
@@ -184,7 +207,8 @@ export default class Rojin extends Page{
                     <p className="rojin-call-obj-comment">{
                         call.comment
                     }</p>
-                    <p>担当老人：{call.occupied ? call.occupied_by : "なし"}</p>
+                    { call.occupied ? <p>電話中：<b>{call.occupied_by}</b></p> : null}
+                    {makeRojinForm(call)}
                 </div>
                 {call_btn}
             </div>;
@@ -278,6 +302,19 @@ export default class Rojin extends Page{
                 pageActions.gotNocall({
                     nocalls: members
                 });
+            });
+        };
+    }
+    private assignHandler(eccs:string){
+        //フリーのときに起こすボタンを押した
+        return (e: React.SyntheticEvent<HTMLSelectElement>)=>{
+            // 選択された老人
+            const rojin_name = e.currentTarget.value;
+            //こいつを起こしたい！！！！！！！！！！！！！！
+            this.props.ws.send({
+                command: "rojin-assign",
+                eccs,
+                rojin_name,
             });
         };
     }
