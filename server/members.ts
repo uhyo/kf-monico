@@ -22,10 +22,11 @@ export function loadCommitteeMembersData():Promise<Array<CommitteeMember>>{
                     reject(err);
                     return;
                 }
-                fulfill(rows.map(([,name,name_phonetic])=>{
+                fulfill(rows.map(([,name,azusa,name_phonetic])=>{
                     return {
                         name,
-                        name_phonetic
+                        name_phonetic: name_phonetic || azusa,
+                        azusa,
                     };
                 }));
             });

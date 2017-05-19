@@ -561,9 +561,10 @@ export default class Session{
                     }).toArray().then((docs:Array<CallDoc>)=>{
                         //O(n^2)じゃん
                         return this.addUserDoc(docs).then((docs:Array<CallDocWithUser>)=>{
+                            const names = docs.map(d => d.user.name.replace(/\s/,""));
                             const phos = docs.map(d => d.user.name_phonetic.replace(/\s/,""));
                             let mems = this.members.filter((m:CommitteeMember)=>{
-                                return phos.indexOf(m.name_phonetic)===-1;
+                                return names.indexOf(m.name)===-1 && phos.indexOf(m.name_phonetic)===-1;
                             });
                             return mems;
                         });

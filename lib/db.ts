@@ -57,6 +57,7 @@ export interface SystemInfo{
 export interface CommitteeMember{
     name: string;
     name_phonetic: string;
+    azusa: string;
 }
 
 
