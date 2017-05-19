@@ -201,7 +201,9 @@ export default class Rojin extends Page{
                 }
             }
             return <div key={call.eccs} className="rojin-call-obj">
-                <div className="rojin-call-obj-name">{call.user.name}</div>
+                <div className="rojin-call-obj-name">
+                    <ruby>{call.user.name}<rt>{call.user.name_phonetic}</rt></ruby>
+                </div>
                 <div className="rojin-call-obj-info">
                     <p>モーニングコール時刻：<b className="rojin-call-obj-time">{this.time(call.next_hour, call.next_minute)}</b>　<small>（スヌーズ：{call.snooze}回）</small></p>
                     <p className="rojin-call-obj-comment">{
